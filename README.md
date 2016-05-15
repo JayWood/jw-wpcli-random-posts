@@ -8,10 +8,12 @@ This WP CLI posts generator, unlike the core generator in WP CLI, supports the f
 * Post Types
 * Post Counts
 * Post Author
-* Featured Images
+* Featured Images ( thanks to [lorempixel.com](http://lorempixel.com) )
 * Featured Image Types ( thanks to [lorempixel.com](http://lorempixel.com) )
 * Image Download sizes
 * Multi-site ( specify site id if necessary )
+
+> Thanks to [BaconIpsum.com](https://baconipsum.com/) for providing the API for the content and [Justin Sternberg](https://twitter.com/Jtsternberg) for letting me know about it in his old code :) - Also thanks to [SetGetGo.com](http://randomword.setgetgo.com/) for the random word generator API 
 
 ## What this does NOT do
 Currently this CLI command does not support meta-data, mainly due to the amount of commands you would need to run for large sites. Still a great script if you need to generate some placeholder posts fast, especially with featured images and terms.
