@@ -20,7 +20,7 @@ Determines the post type of the generated posts.
 **--n=\<post_count\>** - **Default: 1**   
 How many posts you want to generate
 
-**--author=\<id\>** - **Default: 1**
+**--author=\<id\>** - **Default: 1**   
 Sets the author ID of the posts, defaults to the site admin ( typically ID 1 ).
 
 **--tax=\<taxonomy_slug\>**   

@@ -1,4 +1,5 @@
 <?php
+
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	class JW_Random_Posts extends WP_CLI_Command {
