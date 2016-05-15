@@ -13,6 +13,9 @@ This WP CLI posts generator, unlike the core generator in WP CLI, supports the f
 * Image Download sizes
 * Multi-site ( specify site id if necessary )
 
+## What this does NOT do
+Currently this CLI command does not support meta-data, mainly due to the amount of commands you would need to run for large sites. Still a great script if you need to generate some placeholder posts fast, especially with featured images and terms.
+
 ## Options
 **--type=\<post_type\>** - **Default: post**   
 Determines the post type of the generated posts.
@@ -54,9 +57,5 @@ Sets the image category from lorempixel.com, the following options are available
 * fashion
 * technics
 
-**--site=\<site_id\>**
+**--site=\<site_id\>**   
 IF this is set, and the site is multi-site enabled.  A switch to blog occurs to this blog ID so posts are imported to this ID.
-
-## What this does NOT do
-
-Currently this CLI command does not support meta-data, mainly due to the amount of commands you would need to run for large sites. Still a great script if you need to generate some placeholder posts fast, especially with featured images and terms.
