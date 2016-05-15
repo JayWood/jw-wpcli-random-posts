@@ -1,3 +1,21 @@
 {
-  "name": ""
+  "name": "JayWood/jw-wpcli-random-posts",
+  "description": "A robust random post generator for WP CLI which supports multisite, post types, post counts, taxonomies, terms, term counts and featured images."
+  "type": "command",
+  "keywords": ["wp-cli", "wordpress", "placeholder"]
+  "homepage": "http://plugish.com",
+  "license": "GPLv2",
+  "authors": [
+    {
+      "name": "Jay Wood",
+      "email": "jjwood2004@gmail.com",
+      "homepage": "http://plugish.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4"
+  },
+  "autoload": {
+    "files": ["generate-posts.php"]
+  }
 }
