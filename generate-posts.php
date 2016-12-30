@@ -131,17 +131,17 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$this->args = $args;
 			$this->assoc_args = $assoc_args;
 
-			$post_type = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
-			if ( 'post' !== $post_type && ! post_type_exists( $post_type ) ) {
-				WP_CLI::error( sprintf( 'The %s post type does not exist, make sure it is registered properly.', $post_type ) );
-			}
-
+			$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
 			$featured_image = isset( $assoc_args['featured-image'] ) ? true : false;
 			$number_posts   = isset( $assoc_args['n'] ) ? intval( $assoc_args['n'] ) : 1;
 			$taxonomies     = isset( $assoc_args['tax'] ) ? explode( ',', $assoc_args['tax'] ) : array();
 			$term_count     = isset( $assoc_args['tax-n'] ) ? intval( $assoc_args['tax-n'] ) : 3;
 			$post_author    = isset( $assoc_args['author'] ) ? intval( $assoc_args['author'] ) : 1;
 			$blog_id        = isset( $assoc_args['site'] ) ? intval( $assoc_args['site'] ) : false;
+
+			if ( 'post' !== $post_type && ! post_type_exists( $post_type ) ) {
+				WP_CLI::error( sprintf( 'The %s post type does not exist, make sure it is registered properly.', $post_type ) );
+			}
 
 			if ( isset( $assoc_args['img-type'] ) && ! in_array( $assoc_args['img-type'], $this->get_image_types() ) ) {
 				WP_CLI::error( sprintf( 'The image provider %s is not available, you may only use "lorempixel" or "placekitten".', $assoc_args['img-type'] ) );
