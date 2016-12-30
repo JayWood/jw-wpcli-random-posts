@@ -30,7 +30,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * default: post
 		 * ---
 		 *
-		 * [--force]
+		 * [--force-delete]
 		 * : Force deletes posts, skips trash
 		 * ---
 		 * default: false
@@ -150,8 +150,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				foreach ( $posts as $post_id ) {
 					wp_delete_post( $post_id, $force_delete );
 					$progress->tick();
-					WP_CLI::success( sprintf( 'Deleted %d posts', count( $posts ) ) );
 				}
+				WP_CLI::success( sprintf( 'Deleted %d posts', count( $posts ) ) );
 				$progress->finish();
 			} else {
 				WP_CLI::success( 'No posts for the specified post type were found, skipped post deletion' );
