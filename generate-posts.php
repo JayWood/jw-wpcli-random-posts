@@ -66,8 +66,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 
 			// Validate the author exists
-			$user_exists = get_user_by( 'ID', $post_author );
-			if ( ! $user_exists ) {
+			if ( ! get_user_by( 'ID', $post_author ) ) {
 				WP_CLI::error( sprintf( 'User ID %d does not exist within the WordPress database, cannot continue.', $post_author ) );
 			}
 
