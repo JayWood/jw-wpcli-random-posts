@@ -254,7 +254,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 
 			if ( isset( $assoc_args['img-type'] ) && ! in_array( $assoc_args['img-type'], $this->get_image_types() ) ) {
-				WP_CLI::error( sprintf( 'The image provider %s is not available, you may only use "lorempixel" or "placekitten".', $assoc_args['img-type'] ) );
+				WP_CLI::error( sprintf( 'The image provider %s is not available, you may only use one of the following:', $assoc_args['img-type'] ), false );
+				\WP_CLI\Utils\format_items( 'table', $this->transform_img_types_to_table(), array( 'Valid Types' ) );
+				WP_CLI::error( 'Halting Script' );
 			}
 
 			// Validate the author exists
@@ -547,6 +549,17 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			if ( ! \WP_CLI\Utils\wp_version_compare( self::WP_VERSION, '>=' ) ) {
 				WP_CLI::error( sprintf( 'Your WordPress needs updated to the latest version, this script requires v%s or later.', self::WP_VERSION ) );
 			}
+		}
+
+		private function transform_img_types_to_table() {
+			$types = $this->get_image_types();
+			$out = array();
+			foreach ( $types as $img ) {
+				$out[] = array(
+					'Valid Types' => $img,
+				);
+			}
+			return $out;
 		}
 
 	}
