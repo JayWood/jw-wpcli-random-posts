@@ -19,6 +19,9 @@ This WP CLI posts generator, unlike the core generator in WP CLI, supports the f
 Currently this CLI command does not support meta-data, mainly due to the amount of commands you would need to run for large sites. Still a great script if you need to generate some placeholder posts fast, especially with featured images and terms.
 
 ## Cleanup Options
+
+>wp jw-random cleanup <options>
+
 **--type=\<post_type\>** - **Default: post**   
 Determines the post type of the generated posts.
 
@@ -36,6 +39,9 @@ IF this is set, and the site is multi-site enabled.  A switch to blog occurs to 
 Shorthand for typing `--type=attachment` and will save you from typing a second command.
 
 ## Generate Options
+
+>wp jw-random posts <options>
+
 **--type=\<post_type\>** - **Default: post**   
 Determines the post type of the generated posts.
 
