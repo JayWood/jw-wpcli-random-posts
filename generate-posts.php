@@ -27,6 +27,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * default: post
 		 * ---
 		 *
+		 * [--force]
+		 * : Force deletes posts, skips trash
+		 * ---
+		 * default: false
+		 * ---
+		 *
 		 * [--tax=<taxonomy|all>]
 		 * : The Taxonomy, use all to clean everything
 		 * ---
@@ -57,10 +63,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			$this->wp_version_check();
 
-			$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
-			$taxonomies     = isset( $assoc_args['tax'] ) ? explode( ',', $assoc_args['tax'] ) : array();
-			$post_author    = isset( $assoc_args['author'] ) ? intval( $assoc_args['author'] ) : 1;
-			$blog_id        = isset( $assoc_args['site'] ) ? intval( $assoc_args['site'] ) : false;
+			$post_type    = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
+			$taxonomies   = isset( $assoc_args['tax'] ) ? explode( ',', $assoc_args['tax'] ) : array();
+			$post_author  = isset( $assoc_args['author'] ) ? intval( $assoc_args['author'] ) : 1;
+			$blog_id      = isset( $assoc_args['site'] ) ? intval( $assoc_args['site'] ) : false;
+			$force_delete = isset( $assoc_args['force-delete'] );
 
 			if ( isset( $assoc_args['media'] ) ) {
 				$post_type = array( $post_type, 'attachment' );
@@ -103,14 +110,32 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					}
 					$progress->finish();
 					WP_CLI::success( sprintf( 'Deleted %d terms', count( $terms ) ) );
+				} else {
+					WP_CLI::success( "No terms for specified taxonomy found, skipped term deletion." );
 				}
 
 				// Now build the arguments for posts
-				$post_args = array(
+				$posts = get_posts( array(
 					'meta_key'       => $this->meta_key,
 					'meta_value'     => true,
 					'posts_per_page' => -1, // ALL the posts
-				);
+					'post_author'    => $post_author,
+					'post_type'      => $post_type,
+					'post_status'    => 'any',
+					'fields'         => 'ids',
+				) );
+
+				if ( ! empty( $posts ) ) {
+					$progress = \WP_CLI\Utils\make_progress_bar( 'Now removing posts', count( $posts ) );
+					foreach ( $posts as $post_id ) {
+						wp_delete_post( $post_id, $force_delete );
+						$progress->tick();
+						WP_CLI::success( sprintf( 'Deleted %d posts', count( $posts ) ) );
+					}
+					$progress->finish();
+				} else {
+					WP_CLI::success( 'No posts for the specified post type were found, skipped post deletion' );
+				}
 
 
 			}
