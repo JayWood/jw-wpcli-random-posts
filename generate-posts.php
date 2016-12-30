@@ -62,6 +62,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$post_author    = isset( $assoc_args['author'] ) ? intval( $assoc_args['author'] ) : 1;
 			$blog_id        = isset( $assoc_args['site'] ) ? intval( $assoc_args['site'] ) : false;
 
+			if ( isset( $assoc_args['media'] ) ) {
+				$post_type = array( $post_type, 'attachment' );
+			}
+
 			if ( 'post' !== $post_type && ! post_type_exists( $post_type ) ) {
 				WP_CLI::error( sprintf( 'The %s post type does not exist, make sure it is registered properly.', $post_type ) );
 			}
@@ -78,10 +82,38 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Validate the taxonomies data
 			$taxonomies = $this->validate_taxonomies( $taxonomies );
 
-			// Let's walk over and delete terms in these taxonomies first.
-			$term_query = new WP_Term_Query( array(
-				''
-			) );
+			if ( ! empty( $taxonomies ) ) {
+				// Let's walk over and delete terms in these taxonomies first.
+				$term_query = new WP_Term_Query( array(
+					'taxonomy'   => $taxonomies,
+					'get'        => 'all',
+					'hide_empty' => false,
+					'meta_key'   => $this->meta_key,
+					'meta_value' => true,
+				) );
+
+				$terms = $term_query->get_terms();
+
+				if ( ! empty( $terms ) ) {
+					$progress = \WP_CLI\Utils\make_progress_bar( 'Now removing terms.', count( $terms ) );
+					/** @var WP_Term $term_data */
+					foreach( $terms as $term_data ) {
+						wp_delete_term( $term_data->term_id, $term_data->taxonomy );
+						$progress->tick();
+					}
+					$progress->finish();
+					WP_CLI::success( sprintf( 'Deleted %d terms', count( $terms ) ) );
+				}
+
+				// Now build the arguments for posts
+				$post_args = array(
+					'meta_key'       => $this->meta_key,
+					'meta_value'     => true,
+					'posts_per_page' => -1, // ALL the posts
+				);
+
+
+			}
 
 			if ( $blog_id && is_multisite() ) {
 				restore_current_blog();
