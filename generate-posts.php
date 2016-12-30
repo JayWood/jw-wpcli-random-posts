@@ -11,63 +11,29 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 */
 		private $meta_key = '_jwrp_test_data';
 
+
+
 		/**
 		 * Generates a Random set of posts
 		 *
 		 * ## OPTIONS
 		 *
-		 * [--type=<posttype>]
-		 * : The post type
+		 * [--type=<post_type|all>]
+		 * : The post type, use all to clean everything
 		 * ---
 		 * default: post
 		 * ---
 		 *
-		 * [--n=<int>]
-		 * : The number of posts to generate
-		 * ---
-		 * default: 1
-		 * ---
-		 *
-		 * [--tax=<taxonomy>]
-		 * : The taxonomies to tie to the post.
+		 * [--tax=<taxonomy|all>]
+		 * : The Taxonomy, use all to clean everything
 		 * ---
 		 * default: none
 		 * ---
 		 *
-		 * [--tax-n=<int>]
-		 * : The amount of terms to insert per taxonomy.
+		 * [--media]
+		 * : Cleans up the media
 		 * ---
-		 * default: 3
-		 * ---
-		 *
-		 * [--featured-image]
-		 * : Sets a featured image for the post.
-		 *
-		 * [--image-size=<width,height>]
-		 * : Sets the featured image size during download - CAUTION: This downloads the images, so expect a bit of time.
-		 * ---
-		 * default: 1024,768
-		 * ---
-		 *
-		 * [--img-type=<providerslug>]
-		 * : Sets the image provider
-		 * ---
-		 * default: none
-		 * options:
-		 *  - abstract
-		 *  - sports
-		 *  - city
-		 *  - people
-		 *  - transport
-		 *  - animals
-		 *  - food
-		 *  - nature
-		 *  - business
-		 *  - cats
-		 *  - fashion
-		 *  - nightlife
-		 *  - fashion
-		 *  - technics
+		 * default: false
 		 * ---
 		 *
 		 * [--author=<id>]
@@ -82,6 +48,84 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * default: false
 		 * ---
 		 */
+		public function cleanup( $args, $assoc_args ) {
+			$this->args       = $args;
+			$this->assoc_args = $assoc_args;
+
+
+		}
+
+		/**
+			 * Generates a Random set of posts
+			 *
+			 * ## OPTIONS
+			 *
+			 * [--type=<posttype>]
+			 * : The post type
+			 * ---
+			 * default: post
+			 * ---
+			 *
+			 * [--n=<int>]
+			 * : The number of posts to generate
+			 * ---
+			 * default: 1
+			 * ---
+			 *
+			 * [--tax=<taxonomy>]
+			 * : The taxonomies to tie to the post.
+			 * ---
+			 * default: none
+			 * ---
+			 *
+			 * [--tax-n=<int>]
+			 * : The amount of terms to insert per taxonomy.
+			 * ---
+			 * default: 3
+			 * ---
+			 *
+			 * [--featured-image]
+			 * : Sets a featured image for the post.
+			 *
+			 * [--image-size=<width,height>]
+			 * : Sets the featured image size during download - CAUTION: This downloads the images, so expect a bit of time.
+			 * ---
+			 * default: 1024,768
+			 * ---
+			 *
+			 * [--img-type=<providerslug>]
+			 * : Sets the image provider
+			 * ---
+			 * default: none
+			 * options:
+			 *  - abstract
+			 *  - sports
+			 *  - city
+			 *  - people
+			 *  - transport
+			 *  - animals
+			 *  - food
+			 *  - nature
+			 *  - business
+			 *  - cats
+			 *  - fashion
+			 *  - nightlife
+			 *  - fashion
+			 *  - technics
+			 * ---
+			 *
+			 * [--author=<id>]
+			 * : The post author id
+			 * ---
+			 * default: 1
+			 * ---
+			 *
+			 * [--site=<site_id>]
+			 * : If multisite is enabled, you can specify a site id
+			 * ---
+			 * default: false
+			 * ---
+			 */
 		public function posts( $args, $assoc_args ) {
 
 			$this->args = $args;
