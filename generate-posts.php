@@ -11,7 +11,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 */
 		private $meta_key = '_jwrp_test_data';
 
-
+		/**
+		 * The minimum WordPress version required to run this script.
+		 */
+		const WP_VERSION = '4.6';
 
 		/**
 		 * Generates a Random set of posts
@@ -52,6 +55,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$this->args       = $args;
 			$this->assoc_args = $assoc_args;
 
+			$this->is_valid_version();
+
 			$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
 			$taxonomies     = isset( $assoc_args['tax'] ) ? explode( ',', $assoc_args['tax'] ) : array();
 			$post_author    = isset( $assoc_args['author'] ) ? intval( $assoc_args['author'] ) : 1;
@@ -73,9 +78,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Validate the taxonomies data
 			$taxonomies = $this->validate_taxonomies( $taxonomies );
 
-			foreach( $taxonomies as $tax_slug ) {
-
-			}
+			// Let's walk over and delete terms in these taxonomies first.
+			$term_query = new WP_Term_Query( array(
+				''
+			) );
 
 			if ( $blog_id && is_multisite() ) {
 				restore_current_blog();
@@ -157,6 +163,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			$this->args = $args;
 			$this->assoc_args = $assoc_args;
+
+			$this->is_valid_version();
 
 			$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
 			$featured_image = isset( $assoc_args['featured-image'] ) ? true : false;
@@ -458,6 +466,19 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			return $taxonomies;
 		}
+
+		/**
+		 * Compares the current installed version against script requirements.
+		 *
+		 * @author JayWood
+		 */
+		private function is_valid_version() {
+			if ( \WP_CLI\Utils\wp_version_compare( self::WP_VERSION, '>=' ) < 0 ) {
+				WP_CLI::error( sprintf( 'Your WordPress needs updated to the latest version, this script requires v%s or later.', self::WP_VERSION ) );
+			}
+			return true;
+		}
+
 	}
 
 	WP_CLI::add_command( 'jw-random', 'JW_Random_Posts' );
