@@ -97,6 +97,7 @@ IF this is set, and the site is multi-site enabled.  A switch to blog occurs to 
 ## Changelog
 
 ### 1.1
+* Fixed possible bug with `post_type_exists` checks on multisite installs.
 * Added cleanup method to allow users to undo/remove posts, terms, and media that was added via this generator. _This is not backwards compatible, with earlier versions, sorry guys!_
 * Added `post_status` flag for generating posts, you can now set your own status.   
 **Note:** status does not validate, so you can technically set this to anything, its up to you as a developer to expose custom statuses in the admin.
