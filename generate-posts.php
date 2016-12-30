@@ -73,6 +73,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Validate the taxonomies data
 			$taxonomies = $this->validate_taxonomies( $taxonomies );
 
+			foreach( $taxonomies as $tax_slug ) {
+
+			}
+
 			if ( $blog_id && is_multisite() ) {
 				restore_current_blog();
 			}
@@ -442,7 +446,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				}
 
 				if ( ! empty( $errors ) ) {
-					WP_CLI::error( sprintf( "The following taxonomies seem to not be registered: %s", implode( ',', $errors ) ) );
+					WP_CLI::warning( sprintf( "The following taxonomies seem to not be registered: %s", implode( ',', $errors ) ) );
+					WP_CLI::confirm( 'Would you like to ignore those and continue?' );
+
+					// If we continue, return only taxonomies that are present.
+					return array_diff( $taxonomies, $errors );
 				} else {
 					unset( $errors ); // Probably not needed but why not right?
 				}
