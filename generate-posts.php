@@ -71,24 +71,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				WP_CLI::error( sprintf( 'User ID %d does not exist within the WordPress database, cannot continue.', $post_author ) );
 			}
 
-			if ( ! empty( $taxonomies ) ) {
-				$taxonomies = array_filter( $taxonomies );
-				// Validate the taxonomies exist first
-				$errors = array();
-				foreach ( $taxonomies as $taxonomy_slug ) {
-					if ( ! taxonomy_exists( $taxonomy_slug ) ) {
-						$errors[] = $taxonomy_slug;
-					}
-				}
-
-				if ( ! empty( $errors ) ) {
-					WP_CLI::error( sprintf( "The following taxonomies seem to not be registered: %s", implode(',',$errors ) ) );
-				} else {
-					unset( $errors ); // Probably not needed but why not right?
-				}
-			}
-
-
+			// Validate the taxonomies data
+			$taxonomies = $this->validate_taxonomies( $taxonomies );
 
 			if ( $blog_id && is_multisite() ) {
 				restore_current_blog();
@@ -202,9 +186,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				WP_CLI::error( "You either have too many, or too little attributes for image size. Ensure you're using a comma delimited string like 1024,768" );
 			}
 
-			if ( ! empty( $taxonomies ) ) {
-				$taxonomies = array_filter( $taxonomies );
-			}
+			$taxonomies = $this->validate_taxonomies( $taxonomies );
 
 			// Setup terms
 			$term_data = array();
@@ -440,6 +422,34 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				'fashion',
 				'technics',
 			);
+		}
+
+		/**
+		 * Checks taxonomy array passed in against registered taxonomies
+		 *
+		 * @param $taxonomies
+		 *
+		 * @author JayWood
+		 */
+		private function validate_taxonomies( $taxonomies ) {
+			if ( ! empty( $taxonomies ) ) {
+				$taxonomies = array_filter( $taxonomies );
+				// Validate the taxonomies exist first
+				$errors = array();
+				foreach ( $taxonomies as $taxonomy_slug ) {
+					if ( ! taxonomy_exists( $taxonomy_slug ) ) {
+						$errors[] = $taxonomy_slug;
+					}
+				}
+
+				if ( ! empty( $errors ) ) {
+					WP_CLI::error( sprintf( "The following taxonomies seem to not be registered: %s", implode( ',', $errors ) ) );
+				} else {
+					unset( $errors ); // Probably not needed but why not right?
+				}
+			}
+
+			return $taxonomies;
 		}
 	}
 
