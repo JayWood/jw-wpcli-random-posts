@@ -52,7 +52,47 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$this->args       = $args;
 			$this->assoc_args = $assoc_args;
 
+			$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
+			$taxonomies     = isset( $assoc_args['tax'] ) ? explode( ',', $assoc_args['tax'] ) : array();
+			$post_author    = isset( $assoc_args['author'] ) ? intval( $assoc_args['author'] ) : 1;
+			$blog_id        = isset( $assoc_args['site'] ) ? intval( $assoc_args['site'] ) : false;
 
+			if ( 'post' !== $post_type && ! post_type_exists( $post_type ) ) {
+				WP_CLI::error( sprintf( 'The %s post type does not exist, make sure it is registered properly.', $post_type ) );
+			}
+
+			if ( $blog_id && is_multisite() ) {
+				switch_to_blog( $blog_id );
+			}
+
+			// Validate the author exists
+			$user_exists = get_user_by( 'ID', $post_author );
+			if ( ! $user_exists ) {
+				WP_CLI::error( sprintf( 'User ID %d does not exist within the WordPress database, cannot continue.', $post_author ) );
+			}
+
+			if ( ! empty( $taxonomies ) ) {
+				$taxonomies = array_filter( $taxonomies );
+				// Validate the taxonomies exist first
+				$errors = array();
+				foreach ( $taxonomies as $taxonomy_slug ) {
+					if ( ! taxonomy_exists( $taxonomy_slug ) ) {
+						$errors[] = $taxonomy_slug;
+					}
+				}
+
+				if ( ! empty( $errors ) ) {
+					WP_CLI::error( sprintf( "The following taxonomies seem to not be registered: %s", implode(',',$errors ) ) );
+				} else {
+					unset( $errors ); // Probably not needed but why not right?
+				}
+			}
+
+
+
+			if ( $blog_id && is_multisite() ) {
+				restore_current_blog();
+			}
 		}
 
 		/**
