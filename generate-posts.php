@@ -55,7 +55,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$this->args       = $args;
 			$this->assoc_args = $assoc_args;
 
-			$this->is_valid_version();
+			$this->wp_version_check();
 
 			$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
 			$taxonomies     = isset( $assoc_args['tax'] ) ? explode( ',', $assoc_args['tax'] ) : array();
@@ -164,7 +164,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$this->args = $args;
 			$this->assoc_args = $assoc_args;
 
-			$this->is_valid_version();
+			$this->wp_version_check();
 
 			$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
 			$featured_image = isset( $assoc_args['featured-image'] ) ? true : false;
@@ -472,7 +472,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 *
 		 * @author JayWood
 		 */
-		private function is_valid_version() {
+		private function wp_version_check() {
 			if ( \WP_CLI\Utils\wp_version_compare( self::WP_VERSION, '>=' ) < 0 ) {
 				WP_CLI::error( sprintf( 'Your WordPress needs updated to the latest version, this script requires v%s or later.', self::WP_VERSION ) );
 			}
