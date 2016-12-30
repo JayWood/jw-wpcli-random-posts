@@ -17,7 +17,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		const WP_VERSION = '4.6';
 
 		/**
-		 * Generates a Random set of posts
+		 * Cleans up generated content.
 		 *
 		 * ## OPTIONS
 		 *
@@ -68,6 +68,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$post_author  = isset( $assoc_args['author'] ) ? intval( $assoc_args['author'] ) : 1;
 			$blog_id      = isset( $assoc_args['site'] ) ? intval( $assoc_args['site'] ) : false;
 			$force_delete = isset( $assoc_args['force-delete'] );
+
+			if ( $force_delete ) {
+				WP_CLI::confirm( 'You have elected to completely remove the test posts, this cannot be undone, are you sure?' );
+			}
 
 			if ( isset( $assoc_args['media'] ) ) {
 				$post_type = array( $post_type, 'attachment' );
@@ -136,86 +140,92 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				} else {
 					WP_CLI::success( 'No posts for the specified post type were found, skipped post deletion' );
 				}
-
-
 			}
 
 			if ( $blog_id && is_multisite() ) {
 				restore_current_blog();
 			}
+
+			WP_CLI::success( 'Cleanup complete, now put up the broom and get back to coding!' );
 		}
 
 		/**
-			 * Generates a Random set of posts
-			 *
-			 * ## OPTIONS
-			 *
-			 * [--type=<posttype>]
-			 * : The post type
-			 * ---
-			 * default: post
-			 * ---
-			 *
-			 * [--n=<int>]
-			 * : The number of posts to generate
-			 * ---
-			 * default: 1
-			 * ---
-			 *
-			 * [--tax=<taxonomy>]
-			 * : The taxonomies to tie to the post.
-			 * ---
-			 * default: none
-			 * ---
-			 *
-			 * [--tax-n=<int>]
-			 * : The amount of terms to insert per taxonomy.
-			 * ---
-			 * default: 3
-			 * ---
-			 *
-			 * [--featured-image]
-			 * : Sets a featured image for the post.
-			 *
-			 * [--image-size=<width,height>]
-			 * : Sets the featured image size during download - CAUTION: This downloads the images, so expect a bit of time.
-			 * ---
-			 * default: 1024,768
-			 * ---
-			 *
-			 * [--img-type=<providerslug>]
-			 * : Sets the image provider
-			 * ---
-			 * default: none
-			 * options:
-			 *  - abstract
-			 *  - sports
-			 *  - city
-			 *  - people
-			 *  - transport
-			 *  - animals
-			 *  - food
-			 *  - nature
-			 *  - business
-			 *  - cats
-			 *  - fashion
-			 *  - nightlife
-			 *  - fashion
-			 *  - technics
-			 * ---
-			 *
-			 * [--author=<id>]
-			 * : The post author id
-			 * ---
-			 * default: 1
-			 * ---
-			 *
-			 * [--site=<site_id>]
-			 * : If multisite is enabled, you can specify a site id
-			 * ---
-			 * default: false
-			 * ---
-			 */
+		 * Generates a Random set of posts
+		 *
+		 * ## OPTIONS
+		 *
+		 * [--type=<posttype>]
+		 * : The post type
+		 * ---
+		 * default: post
+		 * ---
+		 *
+		 * [--post_status=<status_slug>]
+		 * : The post status these posts should be set to.
+		 * ---
+		 * default: publish
+		 * ---
+		 *
+		 * [--n=<int>]
+		 * : The number of posts to generate
+		 * ---
+		 * default: 1
+		 * ---
+		 *
+		 * [--tax=<taxonomy>]
+		 * : The taxonomies to tie to the post.
+		 * ---
+		 * default: none
+		 * ---
+		 *
+		 * [--tax-n=<int>]
+		 * : The amount of terms to insert per taxonomy.
+		 * ---
+		 * default: 3
+		 * ---
+		 *
+		 * [--featured-image]
+		 * : Sets a featured image for the post.
+		 *
+		 * [--image-size=<width,height>]
+		 * : Sets the featured image size during download - CAUTION: This downloads the images, so expect a bit of time.
+		 * ---
+		 * default: 1024,768
+		 * ---
+		 *
+		 * [--img-type=<providerslug>]
+		 * : Sets the image provider
+		 * ---
+		 * default: none
+		 * options:
+		 *  - abstract
+		 *  - sports
+		 *  - city
+		 *  - people
+		 *  - transport
+		 *  - animals
+		 *  - food
+		 *  - nature
+		 *  - business
+		 *  - cats
+		 *  - fashion
+		 *  - nightlife
+		 *  - fashion
+		 *  - technics
+		 * ---
+		 *
+		 * [--author=<id>]
+		 * : The post author id
+		 * ---
+		 * default: 1
+		 * ---
+		 *
+		 * [--site=<site_id>]
+		 * : If multisite is enabled, you can specify a site id
+		 * ---
+		 * default: false
+		 * ---
+		 */
 		public function posts( $args, $assoc_args ) {
 
 			$this->args = $args;
@@ -230,6 +240,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$term_count     = isset( $assoc_args['tax-n'] ) ? intval( $assoc_args['tax-n'] ) : 3;
 			$post_author    = isset( $assoc_args['author'] ) ? intval( $assoc_args['author'] ) : 1;
 			$blog_id        = isset( $assoc_args['site'] ) ? intval( $assoc_args['site'] ) : false;
+			$post_status    = isset( $assoc_args['post_status'] ) ? $assoc_args['post_status'] : 'publish';
 
 			if ( 'post' !== $post_type && ! post_type_exists( $post_type ) ) {
 				WP_CLI::error( sprintf( 'The %s post type does not exist, make sure it is registered properly.', $post_type ) );
@@ -323,7 +334,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					'post_type'    => $post_type,
 					'post_title'   => $post_title,
 					'post_content' => $post_content,
-					'post_status'  => 'publish',
+					'post_status'  => $post_status,
 					'post_author'  => $post_author,
 					'meta_input' => array(
 						$this->meta_key => true,

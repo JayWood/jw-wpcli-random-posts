@@ -25,6 +25,9 @@ Currently this CLI command does not support meta-data, mainly due to the amount 
 **--type=\<post_type\>** - **Default: post**   
 Determines the post type of the generated posts.
 
+**--force** - **Default: false**   
+Force deletes the posts, skips the trash.
+
 **--author=\<id\>** - **Default: 1**   
 Sets the author ID of the posts, defaults to the site admin ( typically ID 1 ).
 
@@ -44,6 +47,9 @@ Shorthand for typing `--type=attachment` and will save you from typing a second 
 
 **--type=\<post_type\>** - **Default: post**   
 Determines the post type of the generated posts.
+
+**--post_status=\<post_status\>** - **Default: publish**
+The status you want the inserted posts set to.
 
 **--n=\<post_count\>** - **Default: 1**   
 How many posts you want to generate
@@ -89,6 +95,8 @@ IF this is set, and the site is multi-site enabled.  A switch to blog occurs to 
 
 ### 1.1
 * Added cleanup method to allow users to undo/remove posts, terms, and media that was added via this generator. _This is not backwards compatible, with earlier versions, sorry guys!_
+* Added `post_status` flag for generating posts, you can now set your own status.   
+**Note:** status does not validate, so you can technically set this to anything, its up to you as a developer to expose custom statuses in the admin.
 * Added taxonomy validation: Script will now validate if a taxonomy is even registered, and allow you to continue if you want.
 
 
