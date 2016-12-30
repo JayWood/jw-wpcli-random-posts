@@ -227,6 +227,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 						continue;
 					}
 
+					update_post_meta( $image_id, $this->meta_key, true );
+
 					set_post_thumbnail( $post_result, $image_id );
 				}
 
