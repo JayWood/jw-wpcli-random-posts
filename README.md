@@ -18,7 +18,24 @@ This WP CLI posts generator, unlike the core generator in WP CLI, supports the f
 ## What this does NOT do
 Currently this CLI command does not support meta-data, mainly due to the amount of commands you would need to run for large sites. Still a great script if you need to generate some placeholder posts fast, especially with featured images and terms.
 
-## Options
+## Cleanup Options
+**--type=\<post_type\>** - **Default: post**   
+Determines the post type of the generated posts.
+
+**--author=\<id\>** - **Default: 1**   
+Sets the author ID of the posts, defaults to the site admin ( typically ID 1 ).
+
+**--tax=\<taxonomy_slug\>**   
+What taxonomies to generate terms for, if not set, no terms will be created.
+> Taxonomy slugs can be separated by commas if you need more than one.
+
+**--site=\<site_id\>**   
+IF this is set, and the site is multi-site enabled.  A switch to blog occurs to this blog ID so posts are imported to this ID.
+
+**--media**
+Shorthand for typing `--type=attachment` and will save you from typing a second command.
+
+## Generate Options
 **--type=\<post_type\>** - **Default: post**   
 Determines the post type of the generated posts.
 
@@ -61,3 +78,13 @@ Sets the image category from lorempixel.com, the following options are available
 
 **--site=\<site_id\>**   
 IF this is set, and the site is multi-site enabled.  A switch to blog occurs to this blog ID so posts are imported to this ID.
+
+## Changelog
+
+### 1.1
+* Added cleanup method to allow users to undo/remove posts, terms, and media that was added via this generator. _This is not backwards compatible, with earlier versions, sorry guys!_
+* Added taxonomy validation: Script will now validate if a taxonomy is even registered, and allow you to continue if you want.
+
+
+### 1.0
+Initial Release
