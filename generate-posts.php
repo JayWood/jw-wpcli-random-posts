@@ -24,8 +24,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 *
 		 * ## OPTIONS
 		 *
-		 * [--type=<post_type|all>]
-		 * : The post type, use all to clean everything
+		 * [--type=<post_type>]
+		 * : The post type
 		 * ---
 		 * default: post
 		 * ---
@@ -36,14 +36,14 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * default: false
 		 * ---
 		 *
-		 * [--tax=<taxonomy|all>]
-		 * : The Taxonomy, use all to clean everything
+		 * [--tax=<taxonomy>]
+		 * : The Taxonomies, comma separated
 		 * ---
 		 * default: none
 		 * ---
 		 *
 		 * [--media]
-		 * : Cleans up the media
+		 * : Cleans up all media as well.
 		 * ---
 		 * default: false
 		 * ---
@@ -84,7 +84,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$post_type = array( $post_type, 'attachment' );
 			}
 
-			if ( 'post' !== $post_type && ! post_type_exists( $post_type ) ) {
+			if ( is_array( $post_type ) ) {
+				foreach ( $post_type as $p_type ) {
+					if ( 'post' !== $p_type && ! post_type_exists( $p_type ) ) {
+						WP_CLI::error( sprintf( 'The %s post type does not exist, make sure it is registered properly.', $p_type ) );
+					}
+				}
+			} elseif ( 'post' !== $post_type && ! post_type_exists( $post_type ) ) {
 				WP_CLI::error( sprintf( 'The %s post type does not exist, make sure it is registered properly.', $post_type ) );
 			}
 
@@ -98,6 +104,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( ! empty( $taxonomies ) ) {
 				// Let's walk over and delete terms in these taxonomies first.
+
+				if ( ! $force_delete ) {
+					WP_CLI::warning( 'It looks like you aren\'t force deleting posts. If we continue we cannot recover any terms deleted, terms do not have a \'trash\' status.' );
+					WP_CLI::confirm( 'Do you want to continue?' );
+				}
+
 				$term_query = new WP_Term_Query( array(
 					'taxonomy'   => $taxonomies,
 					'get'        => 'all',
@@ -111,7 +123,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				if ( ! empty( $terms ) ) {
 					$progress = \WP_CLI\Utils\make_progress_bar( 'Now removing terms.', count( $terms ) );
 					/** @var WP_Term $term_data */
-					foreach( $terms as $term_data ) {
+					foreach ( $terms as $term_data ) {
 						wp_delete_term( $term_data->term_id, $term_data->taxonomy );
 						$progress->tick();
 					}
@@ -120,29 +132,29 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				} else {
 					WP_CLI::success( "No terms for specified taxonomy found, skipped term deletion." );
 				}
+			}
 
-				// Now build the arguments for posts
-				$posts = get_posts( array(
-					'meta_key'       => $this->meta_key,
-					'meta_value'     => true,
-					'posts_per_page' => -1, // ALL the posts
-					'post_author'    => $post_author,
-					'post_type'      => $post_type,
-					'post_status'    => 'any',
-					'fields'         => 'ids',
-				) );
+			// Now build the arguments for posts
+			$posts = get_posts( array(
+				'meta_key'       => $this->meta_key,
+				'meta_value'     => true,
+				'posts_per_page' => -1, // ALL the posts
+				'post_author'    => $post_author,
+				'post_type'      => $post_type,
+				'post_status'    => 'any',
+				'fields'         => 'ids',
+			) );
 
-				if ( ! empty( $posts ) ) {
-					$progress = \WP_CLI\Utils\make_progress_bar( 'Now removing posts', count( $posts ) );
-					foreach ( $posts as $post_id ) {
-						wp_delete_post( $post_id, $force_delete );
-						$progress->tick();
-						WP_CLI::success( sprintf( 'Deleted %d posts', count( $posts ) ) );
-					}
-					$progress->finish();
-				} else {
-					WP_CLI::success( 'No posts for the specified post type were found, skipped post deletion' );
+			if ( ! empty( $posts ) ) {
+				$progress = \WP_CLI\Utils\make_progress_bar( 'Now removing posts', count( $posts ) );
+				foreach ( $posts as $post_id ) {
+					wp_delete_post( $post_id, $force_delete );
+					$progress->tick();
+					WP_CLI::success( sprintf( 'Deleted %d posts', count( $posts ) ) );
 				}
+				$progress->finish();
+			} else {
+				WP_CLI::success( 'No posts for the specified post type were found, skipped post deletion' );
 			}
 
 			if ( $blog_id && is_multisite() ) {
