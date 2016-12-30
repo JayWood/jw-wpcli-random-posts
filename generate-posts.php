@@ -191,6 +191,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					'post_content' => $post_content,
 					'post_status'  => 'publish',
 					'post_author'  => $post_author,
+					'meta_input' => array(
+						$this->meta_key => true,
+					),
 				), true );
 
 				if ( is_wp_error( $post_result ) ) {
