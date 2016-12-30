@@ -7,6 +7,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		private $args, $assoc_args;
 
 		/**
+		 * @var string A meta key that is used throughout the script to allow removal of the data later.
+		 */
+		private $meta_key = '_jwrp_test_data';
+
+		/**
 		 * Generates a Random set of posts
 		 *
 		 * ## OPTIONS
@@ -120,6 +125,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			// Setup terms
 			$term_data = array();
 			if ( ! empty( $taxonomies ) && 0 < $term_count ) {
+
+				if ( ! function_exists( 'add_term_meta' ) ) {
+					WP_CLI::warning( 'Your installation does not include the add_term_meta() function.' );
+					WP_CLI::confirm( 'You will not be able to remove terms created, do you want to continue?' );
+				}
+
 				WP_CLI::line( sprintf( 'Generating %1$d separate terms for %2$d taxonomies, this may take awhile.', $term_count, count( $taxonomies ) ) );
 				foreach ( $taxonomies as $taxonomy ) {
 					$term_names = array();
@@ -145,6 +156,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 						if ( ! isset( $term_data[ $taxonomy ] ) ) {
 							$term_data[ $taxonomy ] = array();
+						}
+
+						$term_meta_added = add_term_meta( $term_result['term_id'], $this->meta_key, true );
+						if ( is_wp_error( $term_meta_added ) ) {
+							WP_CLI::warning( sprintf( 'Error setting term meta for deletion: %s', $term_meta_added->get_error_message() ) );
+						}
+
+						if ( false === $term_meta_added ) {
+							WP_CLI::warning( sprintf( "There was a general error inserting the term meta for term ID #%d", $term_result['term_id'] ) );
 						}
 
 						$term_data[ $taxonomy ][] = $term_result['term_id'];
