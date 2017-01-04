@@ -464,20 +464,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @return int|null The new attachment ID
 		 */
 		private function download_image( $sizes, $post_id = 0 ) {
-			$sizes = implode( '/', array_filter( $sizes ) );
-
-			$img_type = isset( $this->assoc_args['img-type'] ) ? $this->assoc_args['img-type'] : '';
-
-			$url = 'http://lorempixel.com/' . $sizes;
-			if ( ! empty( $img_type ) ) {
-				$url .= '/' . $img_type;
-			}
-			WP_CLI::line( sprintf( 'Downloading an image with the size of %s, please wait...', str_replace( '/', 'x', $sizes ) ) );
-
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 			require_once ABSPATH . 'wp-admin/includes/image.php';
 
-			$tmp        = download_url( $url );
+			$tmp        = download_url( $this->get_image_url( $sizes ) );
 			$type       = image_type_to_extension( exif_imagetype( $tmp ) );
 			$file_array = array(
 				'name'     => 'placeholderImage_' . mt_rand( 30948, 40982 ) . '_' . str_replace( '/', 'x', $sizes ) . $type,
