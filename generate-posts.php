@@ -436,7 +436,34 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				return '';
 			}
 
-			return wp_remote_retrieve_body( $request );
+			// Get the content and explode it.
+			$content = wp_remote_retrieve_body( $request );
+			$content_bits = explode( ' ', $content );
+
+			// Get up to 3 images to insert to the post.
+			$image_count = mt_rand( 1, 3 );
+			$images = array();
+
+			for ( $i = $image_count; $i--; ) {
+				// Randomize image sizes.
+				$image_sizes = array( mt_rand( 200, 800 ), mt_rand( 200, 800 ) );
+				$alignment   = ( mt_rand( 1, 10 ) % 3 ) ? 'alignleft' : 'alignright';
+				$img_args    = array(
+					$this->get_image_url( $image_sizes ),
+					$image_sizes[0],
+					$image_sizes[1],
+					$alignment,
+				);
+
+				$content_bits[] = vsprintf( '<img src="%1$s" width="%2$d" height="%3$d" class="%4$s" />', $img_args );
+			}
+
+			// Mix it up.
+			shuffle( $content_bits );
+			shuffle( $content_bits );
+			shuffle( $content_bits );
+
+			return implode( ' ', $content_bits );
 		}
 
 		/**
