@@ -574,6 +574,30 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			return $out;
 		}
 
+		/**
+		 * Get an image URL based on provided size.
+		 *
+		 * @since NEXT
+		 *
+		 * @author Zach Owen
+		 *
+		 * @param array $sizes An array of image dimensions.
+		 * @return string
+		 */
+		private function get_image_url( $sizes ) {
+			$sizes = implode( '/', array_filter( $sizes ) );
+
+			$img_type = isset( $this->assoc_args['img-type'] ) ? $this->assoc_args['img-type'] : '';
+
+			$url = 'http://lorempixel.com/' . $sizes;
+			if ( ! empty( $img_type ) ) {
+				$url .= '/' . $img_type;
+			}
+			WP_CLI::line( sprintf( 'Downloading an image with the size of %s, please wait...', str_replace( '/', 'x', $sizes ) ) );
+
+			return $url;
+		}
+
 	}
 
 	WP_CLI::add_command( 'jw-random', 'JW_Random_Posts' );
