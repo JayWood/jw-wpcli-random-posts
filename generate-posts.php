@@ -436,7 +436,34 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				return '';
 			}
 
-			return wp_remote_retrieve_body( $request );
+			// Get the content and explode it.
+			$content = wp_remote_retrieve_body( $request );
+			$content_bits = explode( ' ', $content );
+
+			// Get up to 3 images to insert to the post.
+			$image_count = mt_rand( 1, 3 );
+			$images = array();
+
+			for ( $i = $image_count; $i--; ) {
+				// Randomize image sizes.
+				$image_sizes = array( mt_rand( 200, 800 ), mt_rand( 200, 800 ) );
+				$alignment   = ( mt_rand( 1, 10 ) % 3 ) ? 'alignleft' : 'alignright';
+				$img_args    = array(
+					$this->get_image_url( $image_sizes ),
+					$image_sizes[0],
+					$image_sizes[1],
+					$alignment,
+				);
+
+				$content_bits[] = vsprintf( '<img src="%1$s" width="%2$d" height="%3$d" class="%4$s" />', $img_args );
+			}
+
+			// Mix it up.
+			shuffle( $content_bits );
+			shuffle( $content_bits );
+			shuffle( $content_bits );
+
+			return implode( ' ', $content_bits );
 		}
 
 		/**
@@ -464,20 +491,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @return int|null The new attachment ID
 		 */
 		private function download_image( $sizes, $post_id = 0 ) {
-			$sizes = implode( '/', array_filter( $sizes ) );
-
-			$img_type = isset( $this->assoc_args['img-type'] ) ? $this->assoc_args['img-type'] : '';
-
-			$url = 'http://lorempixel.com/' . $sizes;
-			if ( ! empty( $img_type ) ) {
-				$url .= '/' . $img_type;
-			}
-			WP_CLI::line( sprintf( 'Downloading an image with the size of %s, please wait...', str_replace( '/', 'x', $sizes ) ) );
-
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 			require_once ABSPATH . 'wp-admin/includes/image.php';
 
-			$tmp        = download_url( $url );
+			$tmp        = download_url( $this->get_image_url( $sizes ) );
 			$type       = image_type_to_extension( exif_imagetype( $tmp ) );
 			$file_array = array(
 				'name'     => 'placeholderImage_' . mt_rand( 30948, 40982 ) . '_' . str_replace( '/', 'x', $sizes ) . $type,
@@ -572,6 +589,30 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				);
 			}
 			return $out;
+		}
+
+		/**
+		 * Get an image URL based on provided size.
+		 *
+		 * @since NEXT
+		 *
+		 * @author Zach Owen
+		 *
+		 * @param array $sizes An array of image dimensions.
+		 * @return string
+		 */
+		private function get_image_url( $sizes ) {
+			$sizes = implode( '/', array_filter( $sizes ) );
+
+			$img_type = isset( $this->assoc_args['img-type'] ) ? $this->assoc_args['img-type'] : '';
+
+			$url = 'http://lorempixel.com/' . $sizes;
+			if ( ! empty( $img_type ) ) {
+				$url .= '/' . $img_type;
+			}
+			WP_CLI::line( sprintf( 'Downloading an image with the size of %s, please wait...', str_replace( '/', 'x', $sizes ) ) );
+
+			return $url;
 		}
 
 	}
