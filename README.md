@@ -35,11 +35,11 @@ If you'd like a specific version, say 1.1, it's this simple:
 
 ## Sample Commands
 
-### Generate 50 posts, no feature image:
+### Generate 50 posts, no feature image
 Possibly the simplest way to use the generator.
 * `wp jw-random generate 50`
 
-### Create 10 posts with featured business images for an author:
+### Create 10 posts with featured business images for an author
 First find the author you want to attach the Post to
 * `wp user list`
 
