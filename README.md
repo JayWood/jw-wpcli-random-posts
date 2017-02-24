@@ -28,7 +28,8 @@ Possibly the simplest way to use the generator.
 * `wp jw-random generate 50`
 
 ### Create 10 posts with featured business images for an author:
-First find the author you want to attach the Post to via `wp user list`
+First find the author you want to attach the Post to
+* `wp user list`
 Now you know the author ID just use the `--author` flag like so:
 * `wp jw-random generate 10 --author=13 --featured-image --img-type=business`
 
