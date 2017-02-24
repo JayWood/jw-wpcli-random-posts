@@ -16,7 +16,12 @@ This WP CLI posts generator, unlike the core generator in WP CLI, supports the f
 
 **NEW** - using `wp jw-random cleanup <options>` this script now cleans up after itself.
 
-> Thanks to [BaconIpsum.com](https://baconipsum.com/) for providing the API for the content and [Justin Sternberg](https://twitter.com/Jtsternberg) for letting me know about it in his old code :) - Also thanks to [SetGetGo.com](http://randomword.setgetgo.com/) for the random word generator API 
+> Thanks to [BaconIpsum.com](https://baconipsum.com/) for providing the API for the content and [Justin Sternberg](https://twitter.com/Jtsternberg) for letting me know about it in his old code :) - Also thanks to [SetGetGo.com](http://randomword.setgetgo.com/) for the random word generator API
+ 
+## Support on Beerpay
+Enjoy this nifty tool, or want to see a feature come to life, buy me a few :beers: and let's do this!
+
+[![Beerpay](https://beerpay.io/JayWood/jw-wpcli-random-posts/badge.svg?style=beer-square)](https://beerpay.io/JayWood/jw-wpcli-random-posts)  [![Beerpay](https://beerpay.io/JayWood/jw-wpcli-random-posts/make-wish.svg?style=flat-square)](https://beerpay.io/JayWood/jw-wpcli-random-posts?focus=wish)
 
 ## What this does NOT do
 Currently this CLI command does not support meta-data, mainly due to the amount of commands you would need to run for large sites. Still a great script if you need to generate some placeholder posts fast, especially with featured images and terms.
@@ -71,7 +76,3 @@ In the interest of keeping this readme slim, all options have been moved [to the
 
 ### 1.0
 Initial Release
-## Support on Beerpay
-Hey dude! Help me out for a couple of :beers:!
-
-[![Beerpay](https://beerpay.io/JayWood/jw-wpcli-random-posts/badge.svg?style=beer-square)](https://beerpay.io/JayWood/jw-wpcli-random-posts)  [![Beerpay](https://beerpay.io/JayWood/jw-wpcli-random-posts/make-wish.svg?style=flat-square)](https://beerpay.io/JayWood/jw-wpcli-random-posts?focus=wish)
