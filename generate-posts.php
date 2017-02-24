@@ -7,7 +7,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 */
 	class JW_Random_Posts extends WP_CLI_Command {
 
-		private $args, $assoc_args;
+		private $args, $assoc_args, $progress_bar;
 
 		/**
 		 * @var string A meta key that is used throughout the script to allow removal of the data later.
@@ -121,14 +121,14 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$terms = $term_query->get_terms();
 
 				if ( ! empty( $terms ) ) {
-					$progress = \WP_CLI\Utils\make_progress_bar( 'Now removing terms.', count( $terms ) );
+					$this->progress_bar( count( $terms ), 'Terms', 'Removing' );
 					/** @var WP_Term $term_data */
 					foreach ( $terms as $term_data ) {
 						wp_delete_term( $term_data->term_id, $term_data->taxonomy );
-						$progress->tick();
+						$this->progress_bar( 'tick' );
 					}
-					$progress->finish();
 					WP_CLI::success( sprintf( 'Deleted %d terms', count( $terms ) ) );
+					$this->progress_bar( 'finish' );
 				} else {
 					WP_CLI::success( "No terms for specified taxonomy found, skipped term deletion." );
 				}
@@ -147,12 +147,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			if ( ! empty( $posts ) ) {
 				$progress = \WP_CLI\Utils\make_progress_bar( 'Now removing posts', count( $posts ) );
+				$this->progress_bar( count( $posts ), 'Posts', 'Removing' );
 				foreach ( $posts as $post_id ) {
 					wp_delete_post( $post_id, $force_delete );
-					$progress->tick();
+					$this->progress_bar( 'tick' );
 				}
+				$this->progress_bar( 'finish' );
 				WP_CLI::success( sprintf( 'Deleted %d posts', count( $posts ) ) );
-				$progress->finish();
 			} else {
 				WP_CLI::success( 'No posts for the specified post type were found, skipped post deletion' );
 			}
@@ -245,7 +246,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
 			$featured_image = isset( $assoc_args['featured-image'] ) ? true : false;
-			$number_posts   = isset( $args[ 0 ] ) ? intval( $args[ 0 ] ) : 1;
+			$number_posts   = isset( $args[0] ) ? intval( $args[0] ) : 1;
 			$taxonomies     = isset( $assoc_args['tax'] ) ? explode( ',', $assoc_args['tax'] ) : array();
 			$term_count     = isset( $assoc_args['tax-n'] ) ? intval( $assoc_args['tax-n'] ) : 3;
 			$post_author    = isset( $assoc_args['author'] ) ? intval( $assoc_args['author'] ) : 1;
@@ -301,8 +302,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 						$term_names[] = ucfirst( $term );
 					}
 
+					$this->progress_bar( count( $term_names ), sprintf( 'Terms into the `%s` Taxonomy', $taxonomy ), 'Inserting' );
 					foreach ( $term_names as $name ) {
 						$term_result = wp_insert_term( $name, $taxonomy );
+						$this->progress_bar( 'tick' );
 						if ( is_wp_error( $term_result ) ) {
 							WP_CLI::warning( sprintf( 'Received an error inserting %1$s term into the %2$s taxonomy: %3$s', $name, $taxonomy, $term_result->get_error_message() ) );
 							continue;
@@ -327,12 +330,17 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 						}
 
 						$term_data[ $taxonomy ][] = $term_result['term_id'];
-						WP_CLI::success( sprintf( 'Successfully inserted the %1$s term into the %2$s taxonomy.', $name, $taxonomy ) );
 					}
+					$this->progress_bar( 'finish' );
 				}
 			}
 
+			if ( $featured_image ) {
+				WP_CLI::warning( "Looks like you're adding featured images, this may be slightly slower." );
+			}
+
 			// Now make some posts shall we?
+			$this->progress_bar( $number_posts, 'Posts', 'Creating' );
 			for ( $i = 0; $i < $number_posts; $i++ ) {
 				$post_content = $this->get_post_content();
 				if ( empty( $post_content ) ) {
@@ -361,7 +369,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				}
 
 				if ( isset( $term_data ) && ! empty( $term_data ) ) {
-					WP_CLI::line( sprintf( 'Now setting terms for post %d', $post_result ) );
 					foreach ( $term_data as $taxonomy => $terms ) {
 						shuffle( $terms );
 						$random_terms = array_slice( $terms, 0, mt_rand( 1, count( $terms ) ) );
@@ -375,8 +382,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 							WP_CLI::warning( sprintf( 'Got an error when attempting to assign terms to post id %d: %s', $post_result, $is_set->get_error_message() ) );
 							continue;
 						}
-
-						WP_CLI::success( sprintf( 'Successfully set %s terms for post %d', $taxonomy, $post_result ) );
 					}
 				}
 
@@ -391,8 +396,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					set_post_thumbnail( $post_result, $image_id );
 				}
 
-				WP_CLI::success( sprintf( 'Finally imported post id %d', $post_result ) );
+				$this->progress_bar( 'tick' );
 			}
+
+			$this->progress_bar( 'finish' );
+			WP_CLI::success( 'Awesomesauce! You now have some test data, now go out there and build something amazing!' );
 
 			if ( $blog_id && is_multisite() ) {
 				restore_current_blog();
@@ -469,7 +477,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			if ( ! empty( $img_type ) ) {
 				$url .= '/' . $img_type;
 			}
-			WP_CLI::line( sprintf( 'Downloading an image with the size of %s, please wait...', str_replace( '/', 'x', $sizes ) ) );
 
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 			require_once ABSPATH . 'wp-admin/includes/image.php';
@@ -493,8 +500,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				WP_CLI::warning( sprintf( 'Got an error with id: %s', $id->get_error_message() ) );
 				return null;
 			}
-
-			WP_CLI::success( 'Successfully downloaded image and attached to post.' );
 			return $id;
 		}
 
@@ -569,6 +574,28 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				);
 			}
 			return $out;
+		}
+
+		/**
+		 * Wrapper function for WP_CLI Progress bar
+		 *
+		 * @param int|string $param   If integer, start progress bar, if string, should be tick or finish.
+		 * @param string $object_type Type of object being traversed
+		 * @param string $action      Action being performed
+		 *
+		 * @return bool|object False on failure, WP_CLI progress bar object otherwise.
+		 */
+		private function progress_bar( $param, $object_type = '', $action = 'Migrating' ) {
+
+			if ( $param && is_numeric( $param ) ) {
+				$this->progress_bar = \WP_CLI\Utils\make_progress_bar( "$action $param $object_type.", $param );
+			} elseif ( $this->progress_bar && 'tick' == $param ) {
+				$this->progress_bar->tick();
+			} elseif ( $this->progress_bar && 'finish' == $param ) {
+				$this->progress_bar->finish();
+			}
+
+			return $this->progress_bar;
 		}
 
 	}
