@@ -241,7 +241,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * default: false
 		 * ---
 		 */
-		public function posts( $args, $assoc_args ) {
+		public function generate( $args, $assoc_args ) {
 
 			$this->args = $args;
 			$this->assoc_args = $assoc_args;

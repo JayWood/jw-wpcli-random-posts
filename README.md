@@ -96,6 +96,9 @@ IF this is set, and the site is multi-site enabled.  A switch to blog occurs to 
 
 ## Changelog
 
+### 1.2
+* Fixed - [#6](https://github.com/JayWood/jw-wpcli-random-posts/issues/6) - Error message duplication
+
 ### 1.1
 * Fixed possible bug with `post_type_exists` checks on multisite installs.
 * Added cleanup method to allow users to undo/remove posts, terms, and media that was added via this generator. _This is not backwards compatible, with earlier versions, sorry guys!_
