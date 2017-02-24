@@ -71,3 +71,7 @@ In the interest of keeping this readme slim, all options have been moved [to the
 
 ### 1.0
 Initial Release
+## Support on Beerpay
+Hey dude! Help me out for a couple of :beers:!
+
+[![Beerpay](https://beerpay.io/JayWood/jw-wpcli-random-posts/badge.svg?style=beer-square)](https://beerpay.io/JayWood/jw-wpcli-random-posts)  [![Beerpay](https://beerpay.io/JayWood/jw-wpcli-random-posts/make-wish.svg?style=flat-square)](https://beerpay.io/JayWood/jw-wpcli-random-posts?focus=wish)
