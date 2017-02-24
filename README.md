@@ -21,6 +21,17 @@ This WP CLI posts generator, unlike the core generator in WP CLI, supports the f
 ## What this does NOT do
 Currently this CLI command does not support meta-data, mainly due to the amount of commands you would need to run for large sites. Still a great script if you need to generate some placeholder posts fast, especially with featured images and terms.
 
+## Sample Commands
+
+### Generate 50 posts, no feature image:
+Possibly the simplest way to use the generator.
+* `wp jw-random generate 50`
+
+### Create 10 posts with featured business images for an author:
+First find the author you want to attach the Post to via `wp user list`
+Now you know the author ID just use the `--author` flag like so:
+* `wp jw-random generate 10 --author=13 --featured-image --img-type=business`
+
 ## Cleanup Options
 
 >wp jw-random cleanup <options>
@@ -98,6 +109,7 @@ IF this is set, and the site is multi-site enabled.  A switch to blog occurs to 
 
 ### 1.2
 * Fixed - [#6](https://github.com/JayWood/jw-wpcli-random-posts/issues/6) - Error message duplication
+* Fixed - [#10](https://github.com/JayWood/jw-wpcli-random-posts/issues/10) - Removed a lot of log messages, added progress bars in their place.
 * Changed - `posts` command to `generate` - makes more sense.
 * Remove the flag `--n` for specfying post count, make post count required positional argument instead.
 
