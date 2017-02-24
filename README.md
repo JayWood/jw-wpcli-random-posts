@@ -49,78 +49,9 @@ _( `--tax-n` tells the script to also add 15 terms to each taxonomy )_
 _( `--force-delete` permanently deletes posts and media instead of just trashing them )_
 * `wp jw-random cleanup --tax=post_tag,category --media --force-delete`
 
-## Cleanup Options
+## Options
 
->wp jw-random cleanup <options>
-
-**--type=\<post_type\>** - **Default: post**   
-Determines the post type of the generated posts.
-
-**--force** - **Default: false**   
-Force deletes the posts, skips the trash.
-
-**--author=\<id\>** - **Default: 1**   
-Sets the author ID of the posts, defaults to the site admin ( typically ID 1 ).
-
-**--tax=\<taxonomy_slug\>**   
-What taxonomies to generate terms for, if not set, no terms will be created.
-> Taxonomy slugs can be separated by commas if you need more than one.
-
-**--site=\<site_id\>**   
-IF this is set, and the site is multi-site enabled.  A switch to blog occurs to this blog ID so posts are imported to this ID.
-
-**--media**
-Shorthand for typing `--type=attachment` and will save you from typing a second command.
-
-## Generate Options
-
->wp jw-random posts <options>
-
-**--type=\<post_type\>** - **Default: post**   
-Determines the post type of the generated posts.
-
-**--post_status=\<post_status\>** - **Default: publish**
-The status you want the inserted posts set to.
-
-**--n=\<post_count\>** - **Default: 1**   
-How many posts you want to generate
-
-**--author=\<id\>** - **Default: 1**   
-Sets the author ID of the posts, defaults to the site admin ( typically ID 1 ).
-
-**--tax=\<taxonomy_slug\>**   
-What taxonomies to generate terms for, if not set, no terms will be created.
-> Taxonomy slugs can be separated by commas if you need more than one.
-
-**--tax-n=\<term_count\>** - **Default 3**   
-How many terms to generate _per_ taxonomy slug.
-
-**--featured-image**   
-If this is set, featured images will be set for the posts.
-
-**--image-size=\<width,height\>** - **Default: 1024,768**      
-Determines the image size from lorempixel.com when downloading. It's typically a good idea to set this large enough so your image resizing can handle it without squishing or stretching. 
-
-**--img-type=\<provider_slug\>** - **Default: random**      
-Sets the image category from lorempixel.com, the following options are available:
-
-* abstract
-* sports
-* city
-* people
-* transport
-* animals
-* food
-* nature
-* business
-* cats
-* fashion
-* nightlife
-* fashion
-* technics
-
-**--site=\<site_id\>**   
-IF this is set, and the site is multi-site enabled.  A switch to blog occurs to this blog ID so posts are imported to this ID.
+In the interest of keeping this readme slim, all options have been moved [to the Wiki](https://github.com/JayWood/jw-wpcli-random-posts/wiki).
 
 ## Changelog
 
