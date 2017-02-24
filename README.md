@@ -21,6 +21,13 @@ This WP CLI posts generator, unlike the core generator in WP CLI, supports the f
 ## What this does NOT do
 Currently this CLI command does not support meta-data, mainly due to the amount of commands you would need to run for large sites. Still a great script if you need to generate some placeholder posts fast, especially with featured images and terms.
 
+## Installation
+Installing the random post generator is SUPER easy, for the latest and greatest, do the following:
+* `wp package install jaywood/jw-wpcli-random-posts:dev-master`
+
+If you'd like a specific version, say 1.1, it's this simple:
+* `wp package install jaywood/jw-wpcli-random-posts:1.1`
+
 ## Sample Commands
 
 ### Generate 50 posts, no feature image:
@@ -30,8 +37,17 @@ Possibly the simplest way to use the generator.
 ### Create 10 posts with featured business images for an author:
 First find the author you want to attach the Post to
 * `wp user list`
+
 Now you know the author ID just use the `--author` flag like so:
 * `wp jw-random generate 10 --author=13 --featured-image --img-type=business`
+
+### Create 10 posts with categories, tags, and featured images ( the usual stuff )
+_( `--tax-n` tells the script to also add 15 terms to each taxonomy )_
+* `wp jw-random generate 10 --featured-image --tax=category,post_tag --tax-n=15`
+
+### Clean up posts, terms, and media that was generated
+_( `--force-delete` permanently deletes posts and media instead of just trashing them )_
+* `wp jw-random cleanup --tax=post_tag,category --media --force-delete`
 
 ## Cleanup Options
 
@@ -113,6 +129,7 @@ IF this is set, and the site is multi-site enabled.  A switch to blog occurs to 
 * Fixed - [#10](https://github.com/JayWood/jw-wpcli-random-posts/issues/10) - Removed a lot of log messages, added progress bars in their place.
 * Changed - `posts` command to `generate` - makes more sense.
 * Remove the flag `--n` for specfying post count, make post count required positional argument instead.
+* Significant readme updates.
 
 ### 1.1
 * Fixed possible bug with `post_type_exists` checks on multisite installs.
@@ -120,7 +137,6 @@ IF this is set, and the site is multi-site enabled.  A switch to blog occurs to 
 * Added `post_status` flag for generating posts, you can now set your own status.   
 **Note:** status does not validate, so you can technically set this to anything, its up to you as a developer to expose custom statuses in the admin.
 * Added taxonomy validation: Script will now validate if a taxonomy is even registered, and allow you to continue if you want.
-
 
 ### 1.0
 Initial Release
