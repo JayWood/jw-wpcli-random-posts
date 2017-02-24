@@ -447,7 +447,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		private function get_term() {
 			$request = wp_safe_remote_get( 'http://randomword.setgetgo.com/get.php' );
 			if ( is_wp_error( $request ) ) {
-				WP_CLI::warning( sprintf( 'Received an error when trying to make bacon: %s', $request->get_error_message() ) );
+				WP_CLI::warning( sprintf( 'Error getting a random word for a term: %s', $request->get_error_message() ) );
 				return '';
 			}
 
