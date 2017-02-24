@@ -98,6 +98,7 @@ IF this is set, and the site is multi-site enabled.  A switch to blog occurs to 
 
 ### 1.2
 * Fixed - [#6](https://github.com/JayWood/jw-wpcli-random-posts/issues/6) - Error message duplication
+* Changed - `posts` command to `generate` - makes more sense.
 
 ### 1.1
 * Fixed possible bug with `post_type_exists` checks on multisite installs.

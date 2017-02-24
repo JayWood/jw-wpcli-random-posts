@@ -169,6 +169,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 *
 		 * ## OPTIONS
 		 *
+		 * <number>
+		 * : The number of posts to generate
+		 *
 		 * [--type=<posttype>]
 		 * : The post type
 		 * ---
@@ -179,12 +182,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * : The post status these posts should be set to.
 		 * ---
 		 * default: publish
-		 * ---
-		 *
-		 * [--n=<int>]
-		 * : The number of posts to generate
-		 * ---
-		 * default: 1
 		 * ---
 		 *
 		 * [--tax=<taxonomy>]
@@ -248,7 +245,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
 			$featured_image = isset( $assoc_args['featured-image'] ) ? true : false;
-			$number_posts   = isset( $assoc_args['n'] ) ? intval( $assoc_args['n'] ) : 1;
+			$number_posts   = isset( $args[ 0 ] ) ? intval( $args[ 0 ] ) : 1;
 			$taxonomies     = isset( $assoc_args['tax'] ) ? explode( ',', $assoc_args['tax'] ) : array();
 			$term_count     = isset( $assoc_args['tax-n'] ) ? intval( $assoc_args['tax-n'] ) : 3;
 			$post_author    = isset( $assoc_args['author'] ) ? intval( $assoc_args['author'] ) : 1;
