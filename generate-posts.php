@@ -428,6 +428,43 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		}
 
 		/**
+		 * Randomizes rather or not to use lists, links, decorate, code, etc... in the post content.
+		 *
+		 * @author JayWood
+		 * @return string
+		 */
+		private function randomize_lipsum_params() {
+			$out = array();
+
+			$use_lists = mt_rand( 1, 3 ) == 2 ? true : false;
+			if ( $use_lists ) {
+				$types = array( 'ol', 'ul' );
+				$out[] = $types[ mt_rand( 0, 1 ) ];
+			}
+
+			$use_links = mt_rand( 1, 4 ) == 2 ? true : false;
+			if ( $use_links ) {
+				$out[] = 'link';
+			}
+
+			$use_decorate = mt_rand( 1, 5 ) == 3 ? true : false;
+			if ( $use_decorate ) {
+				$out[] = 'decorate';
+			}
+
+			$use_code = mt_rand( 1, 5 ) == 3 ? true : false;
+			if ( $use_code ) {
+				$out[] = 'code';
+			}
+
+			if ( empty( $out ) ) {
+				return '';
+			}
+
+			return implode( '/', $out );
+		}
+
+		/**
 		 * Gets the post content text, if possible.
 		 *
 		 * @author JayWood
@@ -435,7 +472,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 */
 		private function get_post_content() {
 			$paragraphs = mt_rand( 1, 10 );
-			$request = wp_safe_remote_get( sprintf( 'https://baconipsum.com/api/?type=meat-and-filler&paras=%d&format=text', $paragraphs ) );
+			// $request = wp_safe_remote_get( sprintf( 'https://baconipsum.com/api/?type=meat-and-filler&paras=%d&format=text', $paragraphs ) );
+
+			$other_params = $this->randomize_lipsum_params();
+
+			$url = sprintf( 'http://loripsum.net/api/%1$d/medium/%2$s', $paragraphs, $other_params );
+
+			$request = wp_safe_remote_get( $url );
 			if ( is_wp_error( $request ) ) {
 				WP_CLI::warning( sprintf( 'Received an error when trying to make bacon: %s', $request->get_error_message() ) );
 				return '';
