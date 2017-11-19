@@ -493,7 +493,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @return string
 		 */
 		private function get_term() {
-			$request = wp_safe_remote_get( 'http://randomword.setgetgo.com/get.php' );
+			$request = wp_safe_remote_get( 'http://setgetgo.com/randomword/get.php' );
 			if ( is_wp_error( $request ) ) {
 				WP_CLI::warning( sprintf( 'Error getting a random word for a term: %s', $request->get_error_message() ) );
 				return '';
@@ -525,9 +525,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			require_once ABSPATH . 'wp-admin/includes/image.php';
 
 			$tmp        = download_url( $url );
-			$type       = image_type_to_extension( exif_imagetype( $tmp ) );
+			$type = getimagesize( $tmp )['mime'];
+			$extension = end( explode( '/', $type ) );
+			// $type       = image_type_to_extension( exif_imagetype( $tmp ) );
 			$file_array = array(
-				'name'     => 'placeholderImage_' . mt_rand( 30948, 40982 ) . '_' . str_replace( '/', 'x', $sizes ) . $type,
+				'name'     => 'placeholderImage_' . mt_rand( 30948, 40982 ) . '_' . str_replace( '/', 'x', $sizes ) . '.' . $extension,
 				'tmp_name' => $tmp,
 			);
 
