@@ -60,8 +60,10 @@ In the interest of keeping this readme slim, all options have been moved [to the
 
 ## Changelog
 
-### 1.3 ( TBD )
+### 1.3
 * Changed ipsum generator to loripsum.net, fixes #11
+* Update API url for random word getter ( setgetgo )
+* Remove dependancy on exif PHP library.
 
 ### 1.2
 * Fixed - [#6](https://github.com/JayWood/jw-wpcli-random-posts/issues/6) - Error message duplication
