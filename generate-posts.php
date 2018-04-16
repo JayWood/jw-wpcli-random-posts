@@ -130,7 +130,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					WP_CLI::success( sprintf( 'Deleted %d terms', count( $terms ) ) );
 					$this->progress_bar( 'finish' );
 				} else {
-					WP_CLI::success( "No terms for specified taxonomy found, skipped term deletion." );
+					WP_CLI::success( 'No terms for specified taxonomy found, skipped term deletion.' );
 				}
 			}
 
@@ -146,7 +146,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			) );
 
 			if ( ! empty( $posts ) ) {
-				$progress = \WP_CLI\Utils\make_progress_bar( 'Now removing posts', count( $posts ) );
 				$this->progress_bar( count( $posts ), 'Posts', 'Removing' );
 				foreach ( $posts as $post_id ) {
 					wp_delete_post( $post_id, $force_delete );
@@ -241,7 +240,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 */
 		public function generate( $args, $assoc_args ) {
 
-			$this->args = $args;
+			$this->args       = $args;
 			$this->assoc_args = $assoc_args;
 
 			$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
@@ -326,7 +325,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 						}
 
 						if ( false === $term_meta_added ) {
-							WP_CLI::warning( sprintf( "There was a general error inserting the term meta for term ID #%d", $term_result['term_id'] ) );
+							WP_CLI::warning( sprintf( 'There was a general error inserting the term meta for term ID #%d', $term_result['term_id'] ) );
 						}
 
 						$term_data[ $taxonomy ][] = $term_result['term_id'];
@@ -341,6 +340,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			// Now make some posts shall we?
 			$this->progress_bar( $number_posts, 'Posts', 'Creating' );
+
+			// Begin the loop
 			for ( $i = 0; $i < $number_posts; $i++ ) {
 				$post_content = $this->get_post_content();
 				if ( empty( $post_content ) ) {
@@ -352,13 +353,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					continue;
 				}
 
-				$post_result = wp_insert_post( $post_insert_args = array(
+				$post_result = wp_insert_post( array(
 					'post_type'    => $post_type,
 					'post_title'   => $post_title,
 					'post_content' => $post_content,
 					'post_status'  => $post_status,
 					'post_author'  => $post_author,
-					'meta_input' => array(
+					'meta_input'   => array(
 						$this->meta_key => true,
 					),
 				), true );
@@ -372,7 +373,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					foreach ( $term_data as $taxonomy => $terms ) {
 						shuffle( $terms );
 						$random_terms = array_slice( $terms, 0, mt_rand( 1, count( $terms ) ) );
-						$is_set = wp_set_object_terms( $post_result, $random_terms, $taxonomy );
+						$is_set       = wp_set_object_terms( $post_result, $random_terms, $taxonomy );
 						if ( false === $is_set ) {
 							WP_CLI::warning( sprintf( 'Apparently the post_id of %d is not actually an integer.', $post_result ) );
 							continue;
@@ -525,23 +526,22 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			require_once ABSPATH . 'wp-admin/includes/image.php';
 
 			$tmp        = download_url( $url );
-			$type = getimagesize( $tmp )['mime'];
-			$extension = end( explode( '/', $type ) );
-			// $type       = image_type_to_extension( exif_imagetype( $tmp ) );
+			$type       = getimagesize( $tmp )['mime'];
+			$extension  = end( explode( '/', $type ) );
 			$file_array = array(
 				'name'     => 'placeholderImage_' . mt_rand( 30948, 40982 ) . '_' . str_replace( '/', 'x', $sizes ) . '.' . $extension,
 				'tmp_name' => $tmp,
 			);
 
 			if ( is_wp_error( $tmp ) ) {
-				@unlink( $tmp );
+				@unlink( $tmp ); // @codingStandardsIgnoreLine
 				WP_CLI::warning( sprintf( 'Got an error with tmp: %s', $tmp->get_error_message() ) );
 				return null;
 			}
 
 			$id = media_handle_sideload( $file_array, $post_id );
 			if ( is_wp_error( $id ) ) {
-				@unlink( $tmp );
+				@unlink( $tmp ); // @codingStandardsIgnoreLine
 				WP_CLI::warning( sprintf( 'Got an error with id: %s', $id->get_error_message() ) );
 				return null;
 			}
