@@ -472,14 +472,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @return string
 		 */
 		private function get_post_content() {
-			$paragraphs = mt_rand( 1, 10 );
-			// $request = wp_safe_remote_get( sprintf( 'https://baconipsum.com/api/?type=meat-and-filler&paras=%d&format=text', $paragraphs ) );
 
-			$other_params = $this->randomize_lipsum_params();
-
-			$url = sprintf( 'http://loripsum.net/api/%1$d/medium/%2$s', $paragraphs, $other_params );
-
+			$url     = sprintf( 'http://loripsum.net/api/%1$d/medium/%2$s', mt_rand( 1, 10 ), $this->randomize_lipsum_params() );
 			$request = wp_safe_remote_get( $url );
+
 			if ( is_wp_error( $request ) ) {
 				WP_CLI::warning( sprintf( 'Received an error when trying to make bacon: %s', $request->get_error_message() ) );
 				return '';
