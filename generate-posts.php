@@ -1,6 +1,7 @@
 <?php
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once 'vendor/autoload.php';
 
 	/**
 	 * A robust random post generator built for developers.
