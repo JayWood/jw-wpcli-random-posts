@@ -186,9 +186,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 *
 		 * [--tax=<taxonomy>]
 		 * : The taxonomies to tie to the post.
-		 * ---
-		 * default: none
-		 * ---
 		 *
 		 * [--tax-n=<int>]
 		 * : The amount of terms to insert per taxonomy.
@@ -208,7 +205,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * [--img-type=<providerslug>]
 		 * : Sets the image provider
 		 * ---
-		 * default: none
 		 * options:
 		 *  - abstract
 		 *  - sports
