@@ -17,11 +17,6 @@ This WP CLI posts generator, unlike the core generator in WP CLI, supports the f
 **NEW** - using `wp jw-random cleanup <options>` this script now cleans up after itself.
 
 > Thanks to [Loripsum.net](http://loripsum.net/) for providing the API for the content - Also thanks to [SetGetGo.com](http://randomword.setgetgo.com/) for the random word generator API
- 
-## Support on Beerpay
-Enjoy this nifty tool, or want to see a feature come to life, buy me a few :beers: and let's do this!
-
-[![Beerpay](https://beerpay.io/JayWood/jw-wpcli-random-posts/badge.svg?style=beer-square)](https://beerpay.io/JayWood/jw-wpcli-random-posts)  [![Beerpay](https://beerpay.io/JayWood/jw-wpcli-random-posts/make-wish.svg?style=flat-square)](https://beerpay.io/JayWood/jw-wpcli-random-posts?focus=wish)
 
 ## What this does NOT do
 Currently this CLI command does not support meta-data, mainly due to the amount of commands you would need to run for large sites. Still a great script if you need to generate some placeholder posts fast, especially with featured images and terms.
@@ -59,6 +54,13 @@ _( `--force-delete` permanently deletes posts and media instead of just trashing
 In the interest of keeping this readme slim, all options have been moved [to the Wiki](https://github.com/JayWood/jw-wpcli-random-posts/wiki).
 
 ## Changelog
+
+### 1.4
+* Removed some CLI default values causing the script to complain when it shouldn't have.
+* Cleaned up get_post_content() a bit.
+* Ignore some PHPCS complaints about @unlink
+* Small message updates.
+* Some PHPCS fixes ( alignment, assignments, etc.. )
 
 ### 1.3
 * Changed ipsum generator to loripsum.net, fixes #11
