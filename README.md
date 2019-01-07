@@ -18,6 +18,8 @@ This WP CLI posts generator, unlike the core generator in WP CLI, supports the f
 
 > Thanks to [Loripsum.net](http://loripsum.net/) for providing the API for the content - Also thanks to [SetGetGo.com](http://randomword.setgetgo.com/) for the random word generator API
 
+**This does NOT create Gutenberg blocks**
+
 ## What this does NOT do
 Currently this CLI command does not support meta-data, mainly due to the amount of commands you would need to run for large sites. Still a great script if you need to generate some placeholder posts fast, especially with featured images and terms.
 
