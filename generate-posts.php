@@ -520,7 +520,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			$tmp        = download_url( $url );
 			$type       = getimagesize( $tmp )['mime'];
-			$extension  = end( explode( '/', $type ) );
+			$arr  			= explode( '/', $type );
+			$extension  = end( $arr );
 			$file_array = array(
 				'name'     => 'placeholderImage_' . mt_rand( 30948, 40982 ) . '_' . str_replace( '/', 'x', $sizes ) . '.' . $extension,
 				'tmp_name' => $tmp,
