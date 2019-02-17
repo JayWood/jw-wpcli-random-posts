@@ -482,17 +482,18 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 		/**
 		 * Contacts a random word generator for terms.
-		 * @author JayWood
+		 * @author JayWood, Rovente
 		 * @return string
 		 */
 		private function get_term() {
-			$request = wp_safe_remote_get( 'http://setgetgo.com/randomword/get.php' );
-			if ( is_wp_error( $request ) ) {
-				WP_CLI::warning( sprintf( 'Error getting a random word for a term: %s', $request->get_error_message() ) );
-				return '';
-			}
+		  $request = wp_safe_remote_get( 'http://www.filltext.com/?rows=1&text={lorem|'.rand(1,2).'}' );
+		  if ( is_wp_error( $request ) ) {
+		    WP_CLI::warning( sprintf( 'Error getting a random word for a term: %s', $request->get_error_message() ) );
+		    return '';
+		  }
 
-			return wp_remote_retrieve_body( $request );
+		  $json = json_decode(str_replace(array('[',']'), '', $request['body']));
+		  return $json->{'text'};
 		}
 
 		/**
