@@ -101,25 +101,25 @@ class HTML_Randomizer {
 				$this->add_random_p( $node, $max_length );
 				break;
 			case 2:
-				$this->add_random_a( $node, $max_length );
+				$this->add_random_a( $node );
 				break;
 			case 3:
-				$this->add_random_span( $node, $max_length );
+				$this->add_random_span( $node );
 				break;
 			case 4:
-				$this->add_random_ul( $node, $max_length );
+				$this->add_random_ul( $node );
 				break;
 			case 5:
-				$this->add_random_h( $node, $max_length );
+				$this->add_random_h( $node );
 				break;
 			case 6:
-				$this->add_random_b( $node, $max_length );
+				$this->add_random_b( $node );
 				break;
 			case 7:
-				$this->add_random_i( $node, $max_length );
+				$this->add_random_i( $node );
 				break;
 			case 8:
-				$this->add_random_table( $node, $max_length );
+				$this->add_random_table( $node );
 				break;
 			default:
 				$this->add_random_text( $node, $max_length );
