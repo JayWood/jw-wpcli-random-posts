@@ -15,5 +15,11 @@
   "require": {
     "php": ">=5.4",
     "fzaninotto/faker": "^1.8"
+  },
+  "autoload": {
+    "psr-0": {
+      "plugish\\CLI\\RandomPosts\\Util\\": "util/",
+      "plugish\\CLI\\RandomPosts\\Command\\": "commands/"
+    }
   }
 }

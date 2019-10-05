@@ -2,7 +2,7 @@
 /**
  * A modified version of the HTMLlorem class to make for better generation including max length.
  */
-namespace plugish\CLI\RandomPosts;
+namespace plugish\CLI\RandomPosts\Util;
 
 use DOMDocument;
 use DOMElement;
@@ -39,8 +39,12 @@ class HTML_Randomizer {
 	 */
 	private $generator;
 
-	public function __construct() {
-		$this->generator = Factory::create();
+	public function __construct( $generator ) {
+		if ( is_null( $generator ) ) {
+			$this->generator = Factory::create();
+		} else {
+			$this->generator = $generator;
+		}
 	}
 
 	/**

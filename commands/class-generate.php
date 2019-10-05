@@ -1,6 +1,6 @@
 <?php
 
-namespace plugish\CLI\RandomPosts;
+namespace plugish\CLI\RandomPosts\Command;
 
 use Exception;
 use WP_CLI;
