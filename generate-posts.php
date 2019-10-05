@@ -2,6 +2,8 @@
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
+	require_once 'vendor/autoload.php';
+
 	/**
 	 * A robust random post generator built for developers.
 	 */
@@ -13,6 +15,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @var string A meta key that is used throughout the script to allow removal of the data later.
 		 */
 		private $meta_key = '_jwrp_test_data';
+
+		/**
+		 * @var \Faker\Generator
+		 */
+		private $faker;
 
 		/**
 		 * The minimum WordPress version required to run this script.
@@ -239,6 +246,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$this->args       = $args;
 			$this->assoc_args = $assoc_args;
 
+			$this->faker = Faker\Factory::create();
+
 			$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
 			$featured_image = isset( $assoc_args['featured-image'] ) ? true : false;
 			$number_posts   = isset( $args[0] ) ? intval( $args[0] ) : 1;
@@ -344,7 +353,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					continue;
 				}
 
-				$post_title = $this->get_title_from_text( $post_content );
+				$post_title = $this->get_post_title();
 				if ( empty( $post_title ) ) {
 					continue;
 				}
@@ -468,16 +477,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @return string
 		 */
 		private function get_post_content() {
+			return $this->faker->paragraphs( mt_rand( 1, 10 ) );
+		}
 
-			$url     = sprintf( 'http://loripsum.net/api/%1$d/medium/%2$s', mt_rand( 1, 10 ), $this->randomize_lipsum_params() );
-			$request = wp_safe_remote_get( $url );
-
-			if ( is_wp_error( $request ) ) {
-				WP_CLI::warning( sprintf( 'Received an error when trying to make bacon: %s', $request->get_error_message() ) );
-				return '';
-			}
-
-			return wp_remote_retrieve_body( $request );
+		private function get_post_title() {
+			return $this->faker->sentence( $nbWords = 6, $variableNbWords = true );
 		}
 
 		/**
@@ -486,13 +490,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @return string
 		 */
 		private function get_term() {
-			$request = wp_safe_remote_get( 'http://setgetgo.com/randomword/get.php' );
-			if ( is_wp_error( $request ) ) {
-				WP_CLI::warning( sprintf( 'Error getting a random word for a term: %s', $request->get_error_message() ) );
-				return '';
-			}
-
-			return wp_remote_retrieve_body( $request );
+			return $this->faker->word;
 		}
 
 		/**

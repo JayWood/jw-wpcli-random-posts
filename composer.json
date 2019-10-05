@@ -13,9 +13,7 @@
     }
   ],
   "require": {
-    "php": ">=5.4"
-  },
-  "autoload": {
-    "files": ["generate-posts.php"]
+    "php": ">=5.4",
+    "fzaninotto/faker": "^1.8"
   }
 }
