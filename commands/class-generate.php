@@ -3,12 +3,16 @@
 namespace plugish\CLI\RandomPosts\Command;
 
 use Exception;
+use plugish\CLI\RandomPosts\Util\HTML_Randomizer;
 use WP_CLI;
 use function WP_CLI\Utils\format_items;
 use function WP_CLI\Utils\make_progress_bar;
 use function WP_CLI\Utils\wp_version_compare;
 
 class Generate {
+
+	const IMAGE_MD5_KEY = '_jwrp_image_md5';
+
 	/**
 	 * The WP-CLI Command Arguments
 	 * Nothing to see here.
@@ -31,6 +35,12 @@ class Generate {
 	 * @var \Faker\Generator
 	 */
 	private $faker;
+
+	/**
+	 * @var string A meta key that is used throughout the script to allow removal of the data later.
+	 */
+	private $meta_key = '_jwrp_test_data';
+
 
 	/**
 	 * The minimum WordPress version required to run this script.
@@ -56,13 +66,13 @@ class Generate {
 		// Setup some variables.
 		$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
 		$featured_image = isset( $assoc_args['featured-image'] ) ? true : false;
-		$number_posts   = isset( $args[0] ) ? intval( $args[0] ) : 1;
 		$taxonomies     = isset( $assoc_args['taxonomies'] ) ? explode( ',', $assoc_args['taxonomies'] ) : array();
 		$term_count     = isset( $assoc_args['term-count'] ) ? intval( $assoc_args['term-count'] ) : 3;
+		$img_size       = isset( $assoc_args['image-size'] ) ? $assoc_args['image-size'] : '1024,768';
+		$number_posts   = isset( $args[0] ) ? intval( $args[0] ) : 1;
 		$post_author    = isset( $assoc_args['author'] ) ? intval( $assoc_args['author'] ) : 1;
 		$post_status    = isset( $assoc_args['post-status'] ) ? $assoc_args['post-status'] : 'publish';
 		$img_type       = isset( $assoc_args['image-type'] ) ? $assoc_args['image-type'] : 'business';
-		$img_size       = isset( $assoc_args['image-size'] ) ? $assoc_args['image-size'] : '1024,768';
 		$author         = isset( $assoc_args['post-author'] ) ? $this->get_author_id( $assoc_args['post-author'] ) : 1;
 
 		if ( ! post_type_exists( $post_type ) ) {
@@ -74,8 +84,126 @@ class Generate {
 			WP_CLI::error( "You either have too many, or too little attributes for image size. Ensure you're using a comma delimited string like 1024,768" );
 		}
 
+		if ( $featured_image ) {
+			WP_CLI::warning( 'You are using featured images, this can take some time.' );
+		}
+
 		$taxonomies = $this->validate_taxonomies( $taxonomies );
-		$terms      = $this->get_terms( $taxonomies, $term_count );
+		$term_data  = $this->get_terms( $taxonomies, $term_count );
+
+		// Begin the loop
+		for ( $i = 0; $i < $number_posts; $i++ ) {
+			$post_content = $this->get_post_content();
+			if ( empty( $post_content ) ) {
+				continue;
+			}
+
+			$post_title = $this->get_post_title();
+			if ( empty( $post_title ) ) {
+				continue;
+			}
+
+			$post_result = wp_insert_post( array(
+				'post_type'    => $post_type,
+				'post_title'   => $post_title,
+				'post_content' => $post_content,
+				'post_status'  => $post_status,
+				'post_author'  => $post_author,
+				'meta_input'   => array(
+					$this->meta_key => true,
+				),
+			), true );
+
+			if ( is_wp_error( $post_result ) ) {
+				WP_CLI::debug( sprintf( 'Received an error when trying to insert a post, got: %s', $post_result->get_error_message() ) );
+				continue;
+			}
+
+			if ( ! empty( $term_data ) ) {
+				foreach ( $term_data as $taxonomy => $terms ) {
+					shuffle( $terms );
+					$random_terms = array_slice( $terms, 0, mt_rand( 1, count( $terms ) ) );
+					$is_set       = wp_set_object_terms( $post_result, $random_terms, $taxonomy );
+					if ( false === $is_set ) {
+						WP_CLI::warning( sprintf( 'Apparently the post_id of %d is not actually an integer.', $post_result ) );
+						continue;
+					}
+
+					if ( is_wp_error( $is_set ) ) {
+						WP_CLI::warning( sprintf( 'Got an error when attempting to assign terms to post id %d: %s', $post_result, $is_set->get_error_message() ) );
+						continue;
+					}
+				}
+			}
+
+			if ( $featured_image ) {
+				$image_id = $this->download_image( $image_size_arr, $post_result );
+				if ( empty( $image_id ) ) {
+					continue;
+				}
+
+				update_post_meta( $image_id, $this->meta_key, true );
+
+				set_post_thumbnail( $post_result, $image_id );
+			}
+
+			$this->progress_bar( 'tick' );
+		}
+
+		$this->progress_bar( 'finish' );
+		WP_CLI::success( 'Awesomesauce! You now have some test data, now go out there and build something amazing!' );
+	}
+
+	/**
+	 * Downloads the images from lorempixel.com
+	 *
+	 * @param array $sizes   An array of sizes.
+	 * @param int   $post_id The post id.
+	 *
+	 * @return int|null The new attachment ID
+	 */
+	private function download_image( $sizes, $post_id = 0 ) {
+		global $wpdb;
+		$sizes = implode( '/', array_filter( $sizes ) );
+
+		$img_type = isset( $this->assoc_args['img-type'] ) ? $this->assoc_args['img-type'] : '';
+
+		$url = 'http://lorempixel.com/' . $sizes;
+		if ( ! empty( $img_type ) ) {
+			$url .= '/' . $img_type;
+		}
+		$url .= '/';
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+
+		$tmp = download_url( $url );
+		if ( is_wp_error( $tmp ) ) {
+			@unlink( $tmp ); // @codingStandardsIgnoreLine
+			WP_CLI::warning( sprintf( 'Got an error with tmp: %s', $tmp->get_error_message() ) );
+			return null;
+		}
+
+		$file_md5 = md5_file( $tmp );
+		$id       = $wpdb->get_col( $wpdb->prepare( "select post_id from {$wpdb->postmeta} where meta_key = %s and meta_value = %s", self::IMAGE_MD5_KEY, $file_md5 ) );
+		if ( $id ) {
+			return absint( $id );
+		}
+
+		$type       = getimagesize( $tmp )['mime'];
+		$extension  = end( explode( '/', $type ) );
+		$file_array = array(
+			'name'     => 'placeholderImage_' . mt_rand( 30948, 40982 ) . '_' . str_replace( '/', 'x', $sizes ) . '.' . $extension,
+			'tmp_name' => $tmp,
+		);
+
+		$id = media_handle_sideload( $file_array, $post_id );
+		if ( is_wp_error( $id ) ) {
+			@unlink( $tmp ); // @codingStandardsIgnoreLine
+			WP_CLI::warning( sprintf( 'Got an error with id: %s', $id->get_error_message() ) );
+			return null;
+		}
+		return $id;
 	}
 
 	/**
@@ -88,62 +216,63 @@ class Generate {
 	private function get_terms( array $taxonomies, int $term_count ) : array {
 		// Setup terms
 		$term_data = [];
-		if ( ! empty( $taxonomies ) && 0 < $term_count ) {
-			WP_CLI::line( sprintf( 'Generating %1$d separate terms for %2$d taxonomies, this may take awhile.', $term_count, count( $taxonomies ) ) );
-			foreach ( $taxonomies as $taxonomy ) {
-				$term_names = array();
-				for ( $n = 0; $n < $term_count; $n ++ ) {
-					$term = $this->get_term();
-					if ( empty( $term ) ) {
-						continue;
-					}
-					$term_names[] = ucfirst( $term );
+		if ( empty( $taxonomies ) || empty( $term_count ) ) {
+			return $term_data;
+		}
+
+		foreach ( $taxonomies as $taxonomy ) {
+			$term_names = array();
+			for ( $n = 0; $n < $term_count; $n ++ ) {
+				$term = $this->get_term();
+				if ( empty( $term ) ) {
+					continue;
 				}
-
-				$this->progress_bar( count( $term_names ), sprintf( 'Terms into the `%s` Taxonomy', $taxonomy ), 'Inserting' );
-				foreach ( $term_names as $name ) {
-
-					// Some security fixes.
-					$name = sanitize_text_field( $name );
-
-					// Check if the term exists prior to inserting it.
-					if ( term_exists( $name, $taxonomy ) ) {
-						WP_CLI::debug( sprintf( 'Term name - %s - already exists.', $name ) );
-						$this->progress_bar( 'tick' );
-						continue;
-					}
-
-					$term_result = wp_insert_term( $name, $taxonomy );
-					if ( is_wp_error( $term_result ) ) {
-						WP_CLI::debug( sprintf( 'Received an error inserting %1$s term into the %2$s taxonomy: %3$s', $name, $taxonomy, $term_result->get_error_message() ) );
-						$this->progress_bar( 'tick' );
-						continue;
-					}
-
-					if ( ! isset( $term_result['term_id'] ) ) {
-						WP_CLI::debug( sprintf( 'For some reason the term_id key is not set for %1$s term after inserting, instead we got: %2$s', $name, print_r( $term_result, 1 ) ) );
-						$this->progress_bar( 'tick' );
-						continue;
-					}
-
-					if ( ! isset( $term_data[ $taxonomy ] ) ) {
-						$term_data[ $taxonomy ] = array();
-					}
-
-					$term_meta_added = add_term_meta( $term_result['term_id'], $this->meta_key, true );
-					if ( is_wp_error( $term_meta_added ) ) {
-						WP_CLI::debug( sprintf( 'Error setting term meta for deletion: %s', $term_meta_added->get_error_message() ) );
-					}
-
-					if ( false === $term_meta_added ) {
-						WP_CLI::debug( sprintf( 'There was a general error inserting the term meta for term ID #%d', $term_result['term_id'] ) );
-					}
-
-					$term_data[ $taxonomy ][] = $term_result['term_id'];
-					$this->progress_bar( 'tick' );
-				}
-				$this->progress_bar( 'finish' );
+				$term_names[] = ucfirst( $term );
 			}
+
+			$this->progress_bar( count( $term_names ), sprintf( 'Terms into the `%s` Taxonomy', $taxonomy ), 'Inserting' );
+			foreach ( $term_names as $name ) {
+
+				// Some security fixes.
+				$name = sanitize_text_field( $name );
+
+				// Check if the term exists prior to inserting it.
+				if ( term_exists( $name, $taxonomy ) ) {
+					WP_CLI::debug( sprintf( 'Term name - %s - already exists.', $name ) );
+					$this->progress_bar( 'tick' );
+					continue;
+				}
+
+				$term_result = wp_insert_term( $name, $taxonomy );
+				if ( is_wp_error( $term_result ) ) {
+					WP_CLI::debug( sprintf( 'Received an error inserting %1$s term into the %2$s taxonomy: %3$s', $name, $taxonomy, $term_result->get_error_message() ) );
+					$this->progress_bar( 'tick' );
+					continue;
+				}
+
+				if ( ! isset( $term_result['term_id'] ) ) {
+					WP_CLI::debug( sprintf( 'For some reason the term_id key is not set for %1$s term after inserting, instead we got: %2$s', $name, print_r( $term_result, 1 ) ) );
+					$this->progress_bar( 'tick' );
+					continue;
+				}
+
+				if ( ! isset( $term_data[ $taxonomy ] ) ) {
+					$term_data[ $taxonomy ] = array();
+				}
+
+				$term_meta_added = add_term_meta( $term_result['term_id'], $this->meta_key, true );
+				if ( is_wp_error( $term_meta_added ) ) {
+					WP_CLI::debug( sprintf( 'Error setting term meta for deletion: %s', $term_meta_added->get_error_message() ) );
+				}
+
+				if ( false === $term_meta_added ) {
+					WP_CLI::debug( sprintf( 'There was a general error inserting the term meta for term ID #%d', $term_result['term_id'] ) );
+				}
+
+				$term_data[ $taxonomy ][] = $term_result['term_id'];
+				$this->progress_bar( 'tick' );
+			}
+			$this->progress_bar( 'finish' );
 		}
 
 		return $term_data;
@@ -159,8 +288,7 @@ class Generate {
 	private function validate_taxonomies( array $taxonomies ) : array {
 		if ( ! empty( $taxonomies ) ) {
 			$taxonomies = array_filter( $taxonomies );
-			// Validate the taxonomies exist first
-			$errors = array();
+			$errors     = array();
 			foreach ( $taxonomies as $taxonomy_slug ) {
 				if ( ! taxonomy_exists( $taxonomy_slug ) ) {
 					$errors[] = $taxonomy_slug;
@@ -245,7 +373,8 @@ class Generate {
 	 * @return string
 	 */
 	private function get_post_content() {
-		return $this->faker->paragraphs( mt_rand( 1, 10 ) );
+		$html_randomizer = new HTML_Randomizer( $this->faker );
+		return $html_randomizer->random_html( 4, 4, 256 );
 	}
 
 	private function get_post_title() {
