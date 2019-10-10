@@ -5,7 +5,6 @@ namespace plugish\CLI\RandomPosts\Command;
 use Exception;
 use plugish\CLI\RandomPosts\Util\HTML_Randomizer;
 use WP_CLI;
-use function WP_CLI\Utils\format_items;
 use function WP_CLI\Utils\make_progress_bar;
 use function WP_CLI\Utils\wp_version_compare;
 
@@ -180,7 +179,7 @@ class Generate {
 		$tmp = download_url( $url );
 		if ( is_wp_error( $tmp ) ) {
 			@unlink( $tmp ); // @codingStandardsIgnoreLine
-			WP_CLI::warning( sprintf( 'Got an error with tmp: %s', $tmp->get_error_message() ) );
+			WP_CLI::debug( sprintf( 'Got an error with tmp: %s', $tmp->get_error_message() ) );
 			return null;
 		}
 
@@ -200,7 +199,7 @@ class Generate {
 		$id = media_handle_sideload( $file_array, $post_id );
 		if ( is_wp_error( $id ) ) {
 			@unlink( $tmp ); // @codingStandardsIgnoreLine
-			WP_CLI::warning( sprintf( 'Got an error with id: %s', $id->get_error_message() ) );
+			WP_CLI::debug( sprintf( 'Got an error with id: %s', $id->get_error_message() ) );
 			return null;
 		}
 		return $id;
