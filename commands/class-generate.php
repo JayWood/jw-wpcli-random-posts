@@ -69,10 +69,8 @@ class Generate {
 		$term_count     = isset( $assoc_args['term-count'] ) ? intval( $assoc_args['term-count'] ) : 3;
 		$img_size       = isset( $assoc_args['image-size'] ) ? $assoc_args['image-size'] : '1024,768';
 		$number_posts   = isset( $args[0] ) ? intval( $args[0] ) : 1;
-		$post_author    = isset( $assoc_args['author'] ) ? intval( $assoc_args['author'] ) : 1;
 		$post_status    = isset( $assoc_args['post-status'] ) ? $assoc_args['post-status'] : 'publish';
-		$img_type       = isset( $assoc_args['image-type'] ) ? $assoc_args['image-type'] : 'business';
-		$author         = isset( $assoc_args['post-author'] ) ? $this->get_author_id( $assoc_args['post-author'] ) : 1;
+		$post_author    = isset( $assoc_args['post-author'] ) ? $this->get_author_id( $assoc_args['post-author'] ) : 1;
 
 		if ( ! post_type_exists( $post_type ) ) {
 			WP_CLI::error( sprintf( 'The %s post type does not exist, make sure it is registered properly.', $post_type ) );

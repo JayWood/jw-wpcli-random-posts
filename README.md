@@ -43,19 +43,30 @@ First find the author you want to attach the Post to
 Now you know the author ID just use the `--author` flag like so:
 * `wp jw-random generate 10 --author=13 --featured-image --img-type=business`
 
+The author field also supports **slug** ( login ), and **email**.
+
 ### Create 10 posts with categories, tags, and featured images ( the usual stuff )
-_( `--tax-n` tells the script to also add 15 terms to each taxonomy )_
-* `wp jw-random generate 10 --featured-image --tax=category,post_tag --tax-n=15`
+_( `--term-count` tells the script to also add 15 terms to each taxonomy )_
+* `wp jw-random generate 10 --featured-image --taxonomies=category,post_tag --term-count=15`
 
 ### Clean up posts, terms, and media that was generated
 _( `--force-delete` permanently deletes posts and media instead of just trashing them )_
-* `wp jw-random cleanup --tax=post_tag,category --media --force-delete`
+* `wp jw-random cleanup --tax=post_tag,category --force-delete`
 
 ## Options
 
 In the interest of keeping this readme slim, all options have been moved [to the Wiki](https://github.com/JayWood/jw-wpcli-random-posts/wiki).
 
 ## Changelog
+
+### 2.0
+* A bit of house cleaning.
+* Moved generate and cleanup commands to separate files.
+* Renamed a lot of CLI arguments to make more sense.
+* Now using the Faker library instead of relying on API calls.
+* Author now supports email, slug ( login ), or ID.
+* Removed the media flag, no sense in having it if post type is empty it defaults to all.
+* Removed the `--site` option, use `--url` instead.
 
 ### 1.4
 * Removed some CLI default values causing the script to complain when it shouldn't have.
