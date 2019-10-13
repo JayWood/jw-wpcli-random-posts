@@ -84,11 +84,13 @@ class HTML_Randomizer {
 		$siblings = mt_rand( 1, $max_width );
 		for ( $i = 0; $i < $siblings; $i ++ ) {
 			if ( 1 === $max_depth ) {
+				$this->add_random_p( $root, $max_length );
 				$this->add_random_leaf( $root, $max_length );
 			} else {
 				$sibling = $root->ownerDocument->createElement( 'div' ); // @codingStandardsIgnoreLine
 				$root->appendChild( $sibling );
 				$this->add_random_attribute( $sibling );
+				$this->add_random_p( $root, $max_length );
 				$this->add_random_subtree( $sibling, mt_rand( 0, $max_depth ), $max_width, $max_length );
 			}
 		}
