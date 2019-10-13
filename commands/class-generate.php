@@ -193,7 +193,7 @@ class Generate {
 		$type       = getimagesize( $tmp )['mime'];
 		$extension  = explode( '/', $type );
 		$file_array = array(
-			'name'     => 'placeholderImage_' . mt_rand( 30948, 40982 ) . '_' . str_replace( '/', 'x', $sizes ) . '.' . end( $extension ),
+			'name'     => 'placeholderImage_' . mt_rand( 1, 999999 ) . '_' . str_replace( '/', 'x', $sizes ) . '.' . end( $extension ),
 			'tmp_name' => $tmp,
 		);
 
