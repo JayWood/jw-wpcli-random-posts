@@ -184,8 +184,9 @@ class Generate {
 		}
 
 		$file_md5 = md5_file( $tmp );
-		$id       = $wpdb->get_col( $wpdb->prepare( "select post_id from {$wpdb->postmeta} where meta_key = %s and meta_value = %s", self::IMAGE_MD5_KEY, $file_md5 ) );
+		$id       = $wpdb->get_var( $wpdb->prepare( "select post_id from {$wpdb->postmeta} where meta_key = %s and meta_value = %s", self::IMAGE_MD5_KEY, $file_md5 ) );
 		if ( $id ) {
+			WP_CLI::line( 'Found an id for the image - ' . $id );
 			return absint( $id );
 		}
 
