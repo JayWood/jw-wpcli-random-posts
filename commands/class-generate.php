@@ -84,7 +84,6 @@ class Generate {
 			WP_CLI::warning( 'You are using featured images, this can take some time.' );
 		}
 
-		WP_CLI::error( json_encode( $assoc_args ) );
 		$taxonomies = $this->validate_taxonomies( $taxonomies );
 		$term_data  = $this->get_terms( $taxonomies, $term_count );
 
@@ -283,24 +282,26 @@ class Generate {
 	 * @return array
 	 */
 	private function validate_taxonomies( array $taxonomies ) : array {
-		if ( ! empty( $taxonomies ) ) {
-			$taxonomies = array_filter( $taxonomies );
-			$errors     = array();
-			foreach ( $taxonomies as $taxonomy_slug ) {
-				if ( ! taxonomy_exists( $taxonomy_slug ) ) {
-					$errors[] = $taxonomy_slug;
-				}
-			}
+		if ( empty( $taxonomies ) ) {
+			return $taxonomies;
+		}
 
-			if ( ! empty( $errors ) ) {
-				WP_CLI::warning( sprintf( "The following taxonomies seem to not be registered: %s", implode( ',', $errors ) ) );
-				WP_CLI::confirm( 'Would you like to ignore those and continue?' );
-
-				// If we continue, return only taxonomies that are present.
-				return array_diff( $taxonomies, $errors );
-			} else {
-				unset( $errors ); // Probably not needed but why not right?
+		$taxonomies = array_filter( $taxonomies );
+		$errors     = array();
+		foreach ( $taxonomies as $taxonomy_slug ) {
+			if ( ! taxonomy_exists( $taxonomy_slug ) ) {
+				$errors[] = $taxonomy_slug;
 			}
+		}
+
+		if ( ! empty( $errors ) ) {
+			WP_CLI::warning( sprintf( "The following taxonomies seem to not be registered: %s", implode( ',', $errors ) ) );
+			WP_CLI::confirm( 'Would you like to ignore those and continue?' );
+
+			// If we continue, return only taxonomies that are present.
+			return array_diff( $taxonomies, $errors );
+		} else {
+			unset( $errors ); // Probably not needed but why not right?
 		}
 
 		return $taxonomies;
