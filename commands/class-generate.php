@@ -1,8 +1,12 @@
 <?php
-
+/**
+ * Handles the initialization of the Generate command.
+ *
+ * @package plugish\CLI\RandomPosts
+ * @sub-package Command
+ */
 namespace plugish\CLI\RandomPosts\Command;
 
-use Exception;
 use plugish\CLI\RandomPosts\Util\HTML_Randomizer;
 use WP_CLI;
 use function WP_CLI\Utils\make_progress_bar;
@@ -381,96 +385,3 @@ class Generate {
 		return $this->faker->word;
 	}
 }
-
-try {
-	WP_CLI::add_command( 'jw-random generate', __NAMESPACE__ . '\\Generate', [
-		'shortdesc' => 'Generates posts, terms and attachments based on options passed.',
-		'synopsis'  => [
-			[
-				'type'        => 'flag',
-				'name'        => 'wet',
-				'optional'    => true,
-				'description' => 'Actually runs the command.',
-			],
-			[
-				'type'        => 'assoc',
-				'name'        => 'type',
-				'optional'    => true,
-				'default'     => 'post',
-				'description' => 'A comma separated list ( no spaces ) of post type slugs to generate for.',
-			],
-			[
-				'type'        => 'flag',
-				'name'        => 'featured-image',
-				'optional'    => true,
-				'default'     => false,
-				'description' => 'Enables featured image support ( see image types )',
-			],
-			[
-				'type'        => 'assoc',
-				'optional'    => true,
-				'name'        => 'image-size',
-				'default'     => '1024,768',
-				'description' => 'A comma delimited width and height value for images to import.',
-			],
-			[
-				'type'        => 'assoc',
-				'name'        => 'image-type',
-				'optional'    => true,
-				'description' => 'The type of featured images.',
-				'default'     => 'business',
-				'options'     => [
-					'abstract',
-					'sports',
-					'city',
-					'people',
-					'transport',
-					'animals',
-					'food',
-					'nature',
-					'business',
-					'cats',
-					'fashion',
-					'nightlife',
-					'fashion',
-					'technics'
-				],
-			],
-			[
-				'type'        => 'positional',
-				'name'        => 'num_posts',
-				'optional'    => true,
-				'default'     => 10,
-				'description' => 'The number of posts to generate for each post type.',
-			],
-			[
-				'type'        => 'assoc',
-				'name'        => 'taxonomies',
-				'optional'    => true,
-				'description' => 'A comma separated list ( no spacing ) of taxonomy slugs to generate terms for.',
-			],
-			[
-				'type'        => 'assoc',
-				'name'        => 'term-count',
-				'optional'    => true,
-				'description' => 'The amount of terms to generate for each taxonomy slug. Terms are randomly assigned to posts.',
-			],
-			[
-				'type'        => 'assoc',
-				'name'        => 'post-author',
-				'optional'    => true,
-				'description' => 'The post author ID, email or Login to assign the posts to.',
-				'default'     => 1,
-			],
-			[
-				'type'        => 'assoc',
-				'name'        => 'post-status',
-				'optional'    => true,
-				'description' => 'The post status to set the post to.',
-			],
-		],
-	] );
-} catch ( Exception $e ) {
-	die( $e->getMessage() ); // @codingStandardsIgnoreLine Do not complain about escaping an exception.
-}
-
