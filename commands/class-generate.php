@@ -375,7 +375,7 @@ class Generate {
 	 */
 	private function get_post_content() {
 		$html_randomizer = new HTML_Randomizer( $this->faker );
-		return $html_randomizer->random_html( 4, 4, 256 );
+		return $html_randomizer->random_html( 4, 10, 256 );
 	}
 
 	private function get_post_title() {
