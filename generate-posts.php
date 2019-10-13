@@ -143,7 +143,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				],
 			],
 		] );
-	} catch ( Exception $e ) {
+	} catch ( \Exception $e ) {
 		die( $e->getMessage() );
 	}
 }
