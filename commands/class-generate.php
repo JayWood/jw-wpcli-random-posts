@@ -204,6 +204,7 @@ class Generate {
 		}
 
 		update_post_meta( $id, self::IMAGE_MD5_KEY, $file_md5 );
+		update_post_meta( $id, self::META_KEY, true );
 
 		return $id;
 	}
