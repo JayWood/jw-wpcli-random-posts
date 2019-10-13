@@ -61,7 +61,9 @@ class HTML_Randomizer {
 		$this->add_random_title( $head );
 
 		$body = $document->createElement( 'body' );
-		$this->add_login_form( $body );
+
+		// $this->add_login_form( $body );
+
 		$this->add_random_subtree( $body, $max_depth, $max_width, $max_length );
 
 		$html = $document->createElement( 'html' );
@@ -141,7 +143,7 @@ class HTML_Randomizer {
 
 	private function add_random_p( DOMElement $element, int $max_length = 10 ) {
 		$node              = $element->ownerDocument->createElement( static::P_TAG ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
-		$node->textContent = $this->generator->sentence( mt_rand( 1, $max_length ) ); // @codingStandardsIgnoreLine Snake case ok for node.
+		$node->textContent = $this->generator->sentence( mt_rand( 64, $max_length ) ); // @codingStandardsIgnoreLine Snake case ok for node.
 		$element->appendChild( $node );
 	}
 
@@ -159,7 +161,7 @@ class HTML_Randomizer {
 	}
 
 	private function add_random_title( DOMElement $element, int $max_length = 10 ) {
-		$text = $element->ownerDocument->createTextNode( $this->generator->sentence( mt_rand( 1, $max_length ) ) ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
+		$text = $element->ownerDocument->createTextNode( $this->generator->sentence( mt_rand( 5, $max_length ) ) ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
 		$node = $element->ownerDocument->createElement( static::TITLE_TAG ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
 		$node->appendChild( $text );
 		$element->appendChild( $node );
@@ -167,63 +169,31 @@ class HTML_Randomizer {
 
 	private function add_random_h( DOMElement $element, int $max_length = 10 ) {
 		$h    = static::H_TAG . (string) mt_rand( 1, 3 );
-		$text = $element->ownerDocument->createTextNode( $this->generator->sentence( mt_rand( 1, $max_length ) ) ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
+		$text = $element->ownerDocument->createTextNode( $this->generator->sentence( mt_rand( 5, $max_length ) ) ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
 		$node = $element->ownerDocument->createElement( $h ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
 		$node->appendChild( $text );
 		$element->appendChild( $node );
 	}
 
-	private function add_random_b( DOMElement $element, int $max_length = 10 ) {
-		$text = $element->ownerDocument->createTextNode( $this->generator->sentence( mt_rand( 1, $max_length ) ) ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
+	private function add_random_b( DOMElement $element, int $max_length = 60 ) {
+		$text = $element->ownerDocument->createTextNode( $this->generator->sentence( mt_rand( 10, $max_length ) ) ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
 		$node = $element->ownerDocument->createElement( static::B_TAG ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
 		$node->appendChild( $text );
 		$element->appendChild( $node );
 	}
 
-	private function add_random_i( DOMElement $element, int $max_length = 10 ) {
-		$text = $element->ownerDocument->createTextNode( $this->generator->sentence( mt_rand( 1, $max_length ) ) ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
+	private function add_random_i( DOMElement $element, int $max_length = 30 ) {
+		$text = $element->ownerDocument->createTextNode( $this->generator->sentence( mt_rand( 4, $max_length ) ) ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
 		$node = $element->ownerDocument->createElement( static::I_TAG ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
 		$node->appendChild( $text );
 		$element->appendChild( $node );
 	}
 
-	private function add_random_span( DOMElement $element, int $max_length = 10 ) {
-		$text = $element->ownerDocument->createTextNode( $this->generator->sentence( mt_rand( 1, $max_length ) ) ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
+	private function add_random_span( DOMElement $element, int $max_length = 40 ) {
+		$text = $element->ownerDocument->createTextNode( $this->generator->sentence( mt_rand( 10, $max_length ) ) ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
 		$node = $element->ownerDocument->createElement( static::SPAN_TAG ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
 		$node->appendChild( $text );
 		$element->appendChild( $node );
-	}
-
-	private function add_login_form( DOMElement $element ) {
-
-		$text_input = $element->ownerDocument->createElement( static::INPUT_TAG ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
-		$text_input->setAttribute( 'type', 'text' );
-		$text_input->setAttribute( 'id', 'username' );
-
-		$text_label = $element->ownerDocument->createElement( static::LABEL_TAG ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
-		$text_label->setAttribute( 'for', 'username' );
-		$text_label->textContent = $this->generator->word; // @codingStandardsIgnoreLine Snake case ok.
-
-		$password_input = $element->ownerDocument->createElement( static::INPUT_TAG ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
-		$password_input->setAttribute( 'type', 'password' );
-		$password_input->setAttribute( 'id', 'password' );
-
-		$password_label = $element->ownerDocument->createElement( static::LABEL_TAG ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
-		$password_label->setAttribute( 'for', 'password' );
-		$password_label->textContent = $this->generator->word; // @codingStandardsIgnoreLine Snake case ok.
-
-		$submit = $element->ownerDocument->createElement( static::INPUT_TAG ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
-		$submit->setAttribute( 'type', 'submit' );
-		$submit->setAttribute( 'value', $this->generator->word );
-
-		$submit = $element->ownerDocument->createElement( static::FORM_TAG ); // @codingStandardsIgnoreLine We do not control snake case format of DomDocument
-		$submit->setAttribute( 'action', $this->generator->safeEmailDomain );
-		$submit->setAttribute( 'method', 'POST' );
-		$submit->appendChild( $text_label );
-		$submit->appendChild( $text_input );
-		$submit->appendChild( $password_label );
-		$submit->appendChild( $password_input );
-		$element->appendChild( $submit );
 	}
 
 	private function add_random_table( DOMElement $element, $max_rows = 10, $max_cols = 6, $max_title = 4, $max_length = 10 ) {

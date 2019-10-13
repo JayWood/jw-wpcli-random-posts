@@ -84,7 +84,10 @@ class Generate {
 			WP_CLI::warning( 'You are using featured images, this can take some time.' );
 		}
 
-		$taxonomies = $this->validate_taxonomies( $taxonomies );
+		if ( ! empty( $taxonomies ) ) {
+			$taxonomies = array_filter( explode( ',', $taxonomies ) );
+		}
+		$taxonomies = $this->validate_taxonomies( $taxonomies ?? [] );
 		$term_data  = $this->get_terms( $taxonomies, $term_count );
 
 		// Begin the loop
@@ -187,9 +190,9 @@ class Generate {
 		}
 
 		$type       = getimagesize( $tmp )['mime'];
-		$extension  = end( explode( '/', $type ) );
+		$extension  = explode( '/', $type );
 		$file_array = array(
-			'name'     => 'placeholderImage_' . mt_rand( 30948, 40982 ) . '_' . str_replace( '/', 'x', $sizes ) . '.' . $extension,
+			'name'     => 'placeholderImage_' . mt_rand( 30948, 40982 ) . '_' . str_replace( '/', 'x', $sizes ) . '.' . end( $extension ),
 			'tmp_name' => $tmp,
 		);
 
