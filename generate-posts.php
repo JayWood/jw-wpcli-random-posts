@@ -15,7 +15,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		/*
 		 * The Generate Command.
 		 */
-		WP_CLI::add_command( 'jw-random generate', __NAMESPACE__ . '\\Generate', [
+		\WP_CLI::add_command( 'jw-random generate', __NAMESPACE__ . '\\Generate', [
 			'shortdesc' => 'Generates posts, terms and attachments based on options passed.',
 			'synopsis'  => [
 				[
@@ -106,7 +106,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		/*
 		 * The Cleanup Command.
 		 */
-		WP_CLI::add_command( 'jw-random cleanup', __NAMESPACE__ . '\\Cleanup', [
+		\WP_CLI::add_command( 'jw-random cleanup', __NAMESPACE__ . '\\Cleanup', [
 			'shortdesc' => '',
 			'synopsis'  => [
 				[
