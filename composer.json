@@ -13,9 +13,12 @@
     }
   ],
   "require": {
-    "php": ">=5.4"
+    "php": ">=7.0",
+    "fzaninotto/faker": "^1.8"
   },
   "autoload": {
-    "files": ["generate-posts.php"]
+    "psr-0": {
+      "plugish\\CLI\\RandomPosts\\Util\\": "util/"
+    }
   }
 }
