@@ -10,6 +10,19 @@ use function WP_CLI\Utils\wp_version_compare;
 
 class Generate {
 
+	/**
+	 * The minimum WordPress version required to run this script.
+	 */
+	const WP_VERSION = '4.6';
+
+	/**
+	 * @var string A meta key that is used throughout the script to allow removal of the data later.
+	 */
+	const META_KEY = '_jwrp_test_data';
+
+	/**
+	 * @param string The key for MD5 checks.
+	 */
 	const IMAGE_MD5_KEY = '_jwrp_image_md5';
 
 	/**
@@ -17,13 +30,7 @@ class Generate {
 	 * Nothing to see here.
 	 * @var array
 	 */
-	private $args, $assoc_args;
-
-	/**
-	 * Rather or not to do the actual import.
-	 * @var bool
-	 */
-	private $is_wet_run = false;
+	public $args, $assoc_args;
 
 	/**
 	 * @var object Instance of the progress bar.
@@ -34,17 +41,6 @@ class Generate {
 	 * @var \Faker\Generator
 	 */
 	private $faker;
-
-	/**
-	 * @var string A meta key that is used throughout the script to allow removal of the data later.
-	 */
-	private $meta_key = '_jwrp_test_data';
-
-
-	/**
-	 * The minimum WordPress version required to run this script.
-	 */
-	const WP_VERSION = '4.6';
 
 	/**
 	 * @param array $args
@@ -58,8 +54,6 @@ class Generate {
 		// Properties so it can be reused later.
 		$this->args       = $args;
 		$this->assoc_args = $assoc_args;
-
-		$this->is_wet_run = ! empty( $assoc_args['wet'] );
 		$this->faker      = Faker\Factory::create();
 
 		// Setup some variables.
@@ -107,7 +101,7 @@ class Generate {
 				'post_status'  => $post_status,
 				'post_author'  => $post_author,
 				'meta_input'   => array(
-					$this->meta_key => true,
+					self::META_KEY => true,
 				),
 			), true );
 
@@ -139,7 +133,7 @@ class Generate {
 					continue;
 				}
 
-				update_post_meta( $image_id, $this->meta_key, true );
+				update_post_meta( $image_id, self::META_KEY, true );
 
 				set_post_thumbnail( $post_result, $image_id );
 			}
@@ -257,7 +251,7 @@ class Generate {
 					$term_data[ $taxonomy ] = array();
 				}
 
-				$term_meta_added = add_term_meta( $term_result['term_id'], $this->meta_key, true );
+				$term_meta_added = add_term_meta( $term_result['term_id'], self::META_KEY, true );
 				if ( is_wp_error( $term_meta_added ) ) {
 					WP_CLI::debug( sprintf( 'Error setting term meta for deletion: %s', $term_meta_added->get_error_message() ) );
 				}
@@ -311,7 +305,7 @@ class Generate {
 	 *
 	 * @throws WP_CLI\ExitException
 	 */
-	private function wp_version_check() {
+	public function wp_version_check() {
 		if ( ! wp_version_compare( self::WP_VERSION, '>=' ) ) {
 			WP_CLI::error( sprintf( 'Your WordPress needs updated to the latest version, this script requires v%s or later.', self::WP_VERSION ) );
 		}
@@ -324,7 +318,7 @@ class Generate {
 	 * @return int
 	 * @throws WP_CLI\ExitException
 	 */
-	private function get_author_id( $author_id_name_or_email ) : int {
+	public function get_author_id( $author_id_name_or_email ) : int {
 		if ( is_int( $author_id_name_or_email ) ) {
 			return $author_id_name_or_email;
 		}
@@ -351,7 +345,7 @@ class Generate {
 	 *
 	 * @return bool|object False on failure, WP_CLI progress bar object otherwise.
 	 */
-	private function progress_bar( $param, $object_type = '', $action = 'Migrating' ) {
+	public function progress_bar( $param, $object_type = '', $action = 'Migrating' ) {
 		if ( $param && is_numeric( $param ) ) {
 			$this->progress_bar = make_progress_bar( "$action $param $object_type.", $param );
 		} elseif ( $this->progress_bar && 'tick' == $param ) {
