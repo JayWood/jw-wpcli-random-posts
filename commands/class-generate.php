@@ -202,6 +202,9 @@ class Generate {
 			WP_CLI::debug( sprintf( 'Got an error with id: %s', $id->get_error_message() ) );
 			return null;
 		}
+
+		update_post_meta( $id, self::IMAGE_MD5_KEY, $file_md5 );
+
 		return $id;
 	}
 
