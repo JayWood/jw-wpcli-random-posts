@@ -10,6 +10,9 @@ namespace plugish\CLI\RandomPosts\Command;
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	require_once 'vendor/autoload.php';
+	require_once 'util/class-html-randomizer.php';
+	require_once 'commands/class-generate.php';
+	require_once 'commands/class-cleanup.php';
 
 	try {
 		/*

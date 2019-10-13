@@ -7,6 +7,7 @@
  */
 namespace plugish\CLI\RandomPosts\Command;
 
+use Faker\Factory;
 use plugish\CLI\RandomPosts\Util\HTML_Randomizer;
 use WP_CLI;
 use function WP_CLI\Utils\make_progress_bar;
@@ -58,7 +59,7 @@ class Generate {
 		// Properties so it can be reused later.
 		$this->args       = $args;
 		$this->assoc_args = $assoc_args;
-		$this->faker      = Faker\Factory::create();
+		$this->faker      = Factory::create();
 
 		// Setup some variables.
 		$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
