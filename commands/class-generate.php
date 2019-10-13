@@ -62,21 +62,21 @@ class Generate {
 		$this->faker      = Factory::create();
 
 		// Setup some variables.
-		$post_type      = isset( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
-		$featured_image = isset( $assoc_args['featured-image'] ) ? true : false;
-		$taxonomies     = isset( $assoc_args['taxonomies'] ) ? explode( ',', $assoc_args['taxonomies'] ) : array();
-		$term_count     = isset( $assoc_args['term-count'] ) ? intval( $assoc_args['term-count'] ) : 3;
-		$img_size       = isset( $assoc_args['image-size'] ) ? $assoc_args['image-size'] : '1024,768';
-		$number_posts   = isset( $args[0] ) ? intval( $args[0] ) : 1;
-		$post_status    = isset( $assoc_args['post-status'] ) ? $assoc_args['post-status'] : 'publish';
-		$post_author    = isset( $assoc_args['post-author'] ) ? $this->get_author_id( $assoc_args['post-author'] ) : 1;
+		$post_type      = ! empty( $assoc_args['type'] ) ? $assoc_args['type'] : 'post';
+		$featured_image = ! empty( $assoc_args['featured-image'] ) ? true : false;
+		$taxonomies     = ! empty( $assoc_args['taxonomies'] ) ? $assoc_args['taxonomies'] : [];
+		$term_count     = ! empty( $assoc_args['term-count'] ) ? intval( $assoc_args['term-count'] ) : 3;
+		$img_size       = ! empty( $assoc_args['image-size'] ) ? $assoc_args['image-size'] : '1024,768';
+		$number_posts   = ! empty( $args[0] ) ? intval( $args[0] ) : 1;
+		$post_status    = ! empty( $assoc_args['post-status'] ) ? $assoc_args['post-status'] : 'publish';
+		$post_author    = ! empty( $assoc_args['post-author'] ) ? $this->get_author_id( $assoc_args['post-author'] ) : 1;
 
 		if ( ! post_type_exists( $post_type ) ) {
 			WP_CLI::error( sprintf( 'The %s post type does not exist, make sure it is registered properly.', $post_type ) );
 		}
 
-		$image_size_arr = explode( ',', $img_size );
-		if ( 2 !== count( $image_size_arr ) ) {
+		$image_size_arr = array_filter( explode( ',', $img_size ) );
+		if ( ! empty( $image_size_arr ) && 2 !== count( $image_size_arr ) ) {
 			WP_CLI::error( "You either have too many, or too little attributes for image size. Ensure you're using a comma delimited string like 1024,768" );
 		}
 
@@ -84,6 +84,7 @@ class Generate {
 			WP_CLI::warning( 'You are using featured images, this can take some time.' );
 		}
 
+		WP_CLI::error( json_encode( $assoc_args ) );
 		$taxonomies = $this->validate_taxonomies( $taxonomies );
 		$term_data  = $this->get_terms( $taxonomies, $term_count );
 
@@ -162,7 +163,7 @@ class Generate {
 		global $wpdb;
 		$sizes = implode( '/', array_filter( $sizes ) );
 
-		$img_type = isset( $this->assoc_args['img-type'] ) ? $this->assoc_args['img-type'] : '';
+		$img_type = isset( $this->assoc_args['img-type'] ) ? $this->assoc_args['img-type'] : 'business';
 
 		$url = 'http://lorempixel.com/' . $sizes;
 		if ( ! empty( $img_type ) ) {

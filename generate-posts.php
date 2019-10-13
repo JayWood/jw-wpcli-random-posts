@@ -22,30 +22,21 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			'shortdesc' => 'Generates posts, terms and attachments based on options passed.',
 			'synopsis'  => [
 				[
-					'type'        => 'flag',
-					'name'        => 'wet',
-					'optional'    => true,
-					'description' => 'Actually runs the command.',
-				],
-				[
 					'type'        => 'assoc',
 					'name'        => 'type',
 					'optional'    => true,
-					'default'     => 'post',
 					'description' => 'A comma separated list ( no spaces ) of post type slugs to generate for.',
 				],
 				[
 					'type'        => 'flag',
 					'name'        => 'featured-image',
 					'optional'    => true,
-					'default'     => false,
 					'description' => 'Enables featured image support ( see image types )',
 				],
 				[
 					'type'        => 'assoc',
 					'optional'    => true,
 					'name'        => 'image-size',
-					'default'     => '1024,768',
 					'description' => 'A comma delimited width and height value for images to import.',
 				],
 				[
@@ -53,7 +44,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					'name'        => 'image-type',
 					'optional'    => true,
 					'description' => 'The type of featured images.',
-					'default'     => 'business',
 					'options'     => [
 						'abstract',
 						'sports',
@@ -75,7 +65,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					'type'        => 'positional',
 					'name'        => 'num_posts',
 					'optional'    => true,
-					'default'     => 10,
 					'description' => 'The number of posts to generate for each post type.',
 				],
 				[
@@ -95,7 +84,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					'name'        => 'post-author',
 					'optional'    => true,
 					'description' => 'The post author ID, email or Login to assign the posts to.',
-					'default'     => 1,
 				],
 				[
 					'type'        => 'assoc',
