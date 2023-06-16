@@ -1,5 +1,5 @@
 {
-  "name": "JayWood/jw-wpcli-random-posts",
+  "name": "jaywood/jw-wpcli-random-posts",
   "description": "A robust random post generator for WP CLI which supports multisite, post types, post counts, taxonomies, terms, term counts and featured images.",
   "type": "wp-cli-package",
   "keywords": ["wp-cli", "wordpress", "placeholder", "random posts"],
@@ -14,7 +14,7 @@
   ],
   "require": {
     "php": ">=7.0",
-    "fzaninotto/faker": "^1.8"
+    "fzaninotto/faker": "dev-master"
   },
   "autoload": {
     "psr-0": {
