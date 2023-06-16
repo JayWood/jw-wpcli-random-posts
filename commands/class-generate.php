@@ -163,15 +163,11 @@ class Generate {
 	 */
 	private function download_image( $sizes, $post_id = 0 ) {
 		global $wpdb;
-		$sizes = implode( '/', array_filter( $sizes ) );
+		$sizes = implode( 'x', array_filter( $sizes ) );
 
 		$img_type = isset( $this->assoc_args['img-type'] ) ? $this->assoc_args['img-type'] : 'business';
 
-		$url = 'http://lorempixel.com/' . $sizes;
-		if ( ! empty( $img_type ) ) {
-			$url .= '/' . $img_type;
-		}
-		$url .= '/';
+		$url = 'https://via.placeholder.com/' . $sizes;
 
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/image.php';

@@ -40,28 +40,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					'description' => 'A comma delimited width and height value for images to import.',
 				],
 				[
-					'type'        => 'assoc',
-					'name'        => 'image-type',
-					'optional'    => true,
-					'description' => 'The type of featured images.',
-					'options'     => [
-						'abstract',
-						'sports',
-						'city',
-						'people',
-						'transport',
-						'animals',
-						'food',
-						'nature',
-						'business',
-						'cats',
-						'fashion',
-						'nightlife',
-						'fashion',
-						'technics'
-					],
-				],
-				[
 					'type'        => 'positional',
 					'name'        => 'num_posts',
 					'optional'    => true,

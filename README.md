@@ -9,14 +9,13 @@ This WP CLI posts generator, unlike the core generator in WP CLI, supports the f
 * Post Counts
 * Post Author
 * Post Status
-* Featured Images ( thanks to [lorempixel.com](http://lorempixel.com) )
-* Featured Image Types ( thanks to [lorempixel.com](http://lorempixel.com) )
+* Featured Images
 * Image Download sizes
 * Multi-site ( specify site id if necessary )
 
 **NEW** - using `wp jw-random cleanup <options>` this script now cleans up after itself.
 
-> Thanks to [Loripsum.net](http://loripsum.net/) for providing the API for the content - Also thanks to @fzaninotto for the [Faker](https://github.com/fzaninotto/Faker) library.
+> Thanks to @fzaninotto for the [Faker](https://github.com/fzaninotto/Faker) library.
 
 ## What this does NOT do
 Currently this CLI command does not support meta-data, mainly due to the amount of commands you would need to run for large sites. Still a great script if you need to generate some placeholder posts fast, especially with featured images and terms.
@@ -39,7 +38,7 @@ First find the author you want to attach the Post to
 * `wp user list`
 
 Now you know the author ID just use the `--author` flag like so:
-* `wp jw-random generate 10 --author=13 --featured-image --img-type=business`
+* `wp jw-random generate 10 --author=13 --featured-image`
 
 The author field also supports **slug** ( login ), and **email**.
 
